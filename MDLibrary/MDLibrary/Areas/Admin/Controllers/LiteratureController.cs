@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 using System.Linq;
-using System.Security.Policy;
 using System.Threading.Tasks;
 
 namespace MDLibrary.Areas.Admin.Controllers
@@ -47,7 +46,7 @@ namespace MDLibrary.Areas.Admin.Controllers
             var literatureViewModels = await literatureEntities
                 .Skip((page - 1) * itemsPerPage)
                 .Take(itemsPerPage)
-                .Select(x => new LiteratureIndexShortInfoViewModel
+                .Select(x => new LiteratureShortInfoViewModel
                 {
                     Id = x.LiteratureId,
                     Caption = x.Caption,
@@ -85,7 +84,7 @@ namespace MDLibrary.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            return View(new LiteratureIndexShortInfoViewModel
+            return View(new LiteratureShortInfoViewModel
             {
                 Id = literatureEntity.LiteratureId,
                 Caption = literatureEntity.Caption
@@ -101,7 +100,7 @@ namespace MDLibrary.Areas.Admin.Controllers
                 _context.Literature.Remove(article!);
                 _context.SaveChanges();
             }
-            catch (DataException)
+            catch (DbUpdateException)
             {
                 return RedirectToAction("Delete", new { id, saveChangesError = true });
             }
@@ -177,6 +176,8 @@ namespace MDLibrary.Areas.Admin.Controllers
             literatureToUpdate.Bbc = model.Bbc;
             literatureToUpdate.Udc = model.Udc;
             literatureToUpdate.Abstract = model.Abstract;
+            literatureToUpdate.Authors = [];
+            literatureToUpdate.Keywords = [];
 
             var authors = model.Authors?.Split(", ") ?? [];
             var keywords = model.Keywords?.Split(", ") ?? [];

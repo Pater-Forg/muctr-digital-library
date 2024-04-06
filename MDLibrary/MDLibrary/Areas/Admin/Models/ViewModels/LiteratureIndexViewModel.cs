@@ -5,7 +5,7 @@ namespace MDLibrary.Areas.Admin.Models.ViewModels
 {
     public class LiteratureIndexViewModel
     {
-        public IEnumerable<LiteratureIndexShortInfoViewModel> Literature { get; set; }
+        public IEnumerable<LiteratureShortInfoViewModel> Literature { get; set; }
         public PagingInfo PagingInfo { get; set; }
     }
 }
