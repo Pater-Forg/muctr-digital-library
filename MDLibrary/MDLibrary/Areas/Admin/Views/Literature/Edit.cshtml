@@ -1,0 +1,58 @@
+﻿@model LiteratureEditViewModel
+@{
+	ViewData["Title"] = Model.Caption + " - редактировать";
+}
+
+<form asp-area="Admin" asp-controller="Literature" asp-action="Edit" method="post">
+	<h3>Редактирование</h3>
+	<p class="text-danger">@ViewBag.ErrorMessage</p>
+	<div class="form-group">
+		<label asp-for="@Model.Id">ID</label>
+		<input asp-for="@Model.Id" readonly="true" class="form-control" value="@Model.Id"/>
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.Caption">Название</label>
+		<input asp-for="@Model.Caption" class="form-control" value="@Model.Caption" />
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.Authors">Авторы</label>
+		<input asp-for="@Model.Authors" class="form-control" value="@Model.Authors" />
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.Keywords">Ключевые слова</label>
+		<input asp-for="@Model.Keywords" class="form-control" value="@Model.Keywords" />
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.PageCount">Количество страниц</label>
+		<input asp-for="@Model.PageCount" type="number" class="form-control" value="@Model.PageCount" />
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.PublishYear">Год издания</label>
+		<input asp-for="@Model.PublishYear" type="number" class="form-control" value="@Model.PublishYear"/>
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.PublishLocation">Место издания</label>
+		<input asp-for="@Model.PublishLocation" class="form-control" value="@Model.PublishLocation" />
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.Publisher">Издательство</label>
+		<input asp-for="@Model.Publisher" class="form-control" value="@Model.Publisher" />
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.Isbn">ISBN</label>
+		<input asp-for="@Model.Isbn" class="form-control" value="@Model.Isbn" />
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.Bbc">ББК</label>
+		<input asp-for="@Model.Bbc" class="form-control" value="@Model.Bbc" />
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.Udc">УДК</label>
+		<input asp-for="@Model.Udc" class="form-control" value="@Model.Udc" />
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.Abstract">Аннотация</label>
+		<textarea asp-for="@Model.Abstract" class="form-control" rows="5" value="@Model.Abstract"></textarea>
+	</div>
+	<button type="submit" class="btn btn-primary">Сохранить</button>
+</form>

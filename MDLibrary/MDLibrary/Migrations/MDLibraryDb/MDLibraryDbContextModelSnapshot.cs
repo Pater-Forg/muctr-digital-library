@@ -27,12 +27,12 @@ namespace MDLibrary.Migrations.MDLibraryDb
                     b.Property<int>("AuthorsAuthorId")
                         .HasColumnType("int");
 
-                    b.Property<int>("LiteratureId")
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.HasKey("AuthorsAuthorId", "LiteratureId");
+                    b.HasKey("AuthorsAuthorId", "Id");
 
-                    b.HasIndex("LiteratureId");
+                    b.HasIndex("Id");
 
                     b.ToTable("AuthorLiterature");
                 });
@@ -42,12 +42,12 @@ namespace MDLibrary.Migrations.MDLibraryDb
                     b.Property<int>("KeywordsKeywordId")
                         .HasColumnType("int");
 
-                    b.Property<int>("LiteratureId")
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.HasKey("KeywordsKeywordId", "LiteratureId");
+                    b.HasKey("KeywordsKeywordId", "Id");
 
-                    b.HasIndex("LiteratureId");
+                    b.HasIndex("Id");
 
                     b.ToTable("KeywordLiterature");
                 });
@@ -85,12 +85,12 @@ namespace MDLibrary.Migrations.MDLibraryDb
                         .IsRequired()
                         .HasColumnType("varchar(256)");
 
-                    b.Property<int>("LiteratureId")
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
                     b.HasKey("FileId");
 
-                    b.HasIndex("LiteratureId");
+                    b.HasIndex("Id");
 
                     b.ToTable("Files");
                 });
@@ -114,11 +114,11 @@ namespace MDLibrary.Migrations.MDLibraryDb
 
             modelBuilder.Entity("MDLibrary.Domain.Entities.Literature", b =>
                 {
-                    b.Property<int>("LiteratureId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LiteratureId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Abstract")
                         .HasColumnType("varchar(max)");
@@ -148,7 +148,7 @@ namespace MDLibrary.Migrations.MDLibraryDb
                     b.Property<string>("Udc")
                         .HasColumnType("varchar(128)");
 
-                    b.HasKey("LiteratureId");
+                    b.HasKey("Id");
 
                     b.ToTable("Literature");
                 });
@@ -163,7 +163,7 @@ namespace MDLibrary.Migrations.MDLibraryDb
 
                     b.HasOne("MDLibrary.Domain.Entities.Literature", null)
                         .WithMany()
-                        .HasForeignKey("LiteratureId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -178,7 +178,7 @@ namespace MDLibrary.Migrations.MDLibraryDb
 
                     b.HasOne("MDLibrary.Domain.Entities.Literature", null)
                         .WithMany()
-                        .HasForeignKey("LiteratureId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -187,7 +187,7 @@ namespace MDLibrary.Migrations.MDLibraryDb
                 {
                     b.HasOne("MDLibrary.Domain.Entities.Literature", "Literature")
                         .WithMany()
-                        .HasForeignKey("LiteratureId")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

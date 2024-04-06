@@ -77,7 +77,7 @@ namespace MDLibrary.Migrations.MDLibraryDb
                         name: "FK_AuthorLiterature_Literature_LiteratureId",
                         column: x => x.LiteratureId,
                         principalTable: "Literature",
-                        principalColumn: "LiteratureId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -98,7 +98,7 @@ namespace MDLibrary.Migrations.MDLibraryDb
                         name: "FK_Files_Literature_LiteratureId",
                         column: x => x.LiteratureId,
                         principalTable: "Literature",
-                        principalColumn: "LiteratureId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -122,24 +122,24 @@ namespace MDLibrary.Migrations.MDLibraryDb
                         name: "FK_KeywordLiterature_Literature_LiteratureId",
                         column: x => x.LiteratureId,
                         principalTable: "Literature",
-                        principalColumn: "LiteratureId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AuthorLiterature_LiteratureId",
                 table: "AuthorLiterature",
-                column: "LiteratureId");
+                column: "Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Files_LiteratureId",
                 table: "Files",
-                column: "LiteratureId");
+                column: "Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_KeywordLiterature_LiteratureId",
                 table: "KeywordLiterature",
-                column: "LiteratureId");
+                column: "Id");
         }
 
         /// <inheritdoc />

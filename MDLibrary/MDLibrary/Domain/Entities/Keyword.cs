@@ -7,5 +7,10 @@ namespace MDLibrary.Domain.Entities
         public int KeywordId { get; set; }
         public string Value { get; set; }
         public ICollection<Literature> Literature { get; set; } = [];
-    }
+
+		public override string ToString()
+		{
+			return Value;
+		}
+	}
 }
