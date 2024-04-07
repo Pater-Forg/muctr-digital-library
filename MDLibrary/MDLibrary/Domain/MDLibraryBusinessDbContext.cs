@@ -1,11 +1,12 @@
 ﻿using MDLibrary.Domain.Entities;
+using MDLibrary.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace MDLibrary.Domain
 {
-    public class MDLibraryDbContext : DbContext
+    public class MDLibraryBusinessDbContext : DbContext
     {
-        public MDLibraryDbContext(DbContextOptions<MDLibraryDbContext> options)
+        public MDLibraryBusinessDbContext(DbContextOptions<MDLibraryBusinessDbContext> options)
             : base(options)
         {
             
@@ -18,6 +19,9 @@ namespace MDLibrary.Domain
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+            // For naming conventions purposes. EF uses CamelCase, and Pgsql uses snake_case
+            modelBuilder.MigrateTablenamesToPostgres();
             // Literature configuration //
 
             modelBuilder.Entity<Literature>(
@@ -29,7 +33,7 @@ namespace MDLibrary.Domain
                     e.Property(p => p.Isbn).HasColumnType("varchar(128)");
                     e.Property(p => p.Bbc).HasColumnType("varchar(128)");
                     e.Property(p => p.Udc).HasColumnType("varchar(128)");
-                    e.Property(p => p.Abstract).HasColumnType("varchar(max)");
+                    e.Property(p => p.Abstract).HasColumnType("text");
                 });
 
             // File configuration //

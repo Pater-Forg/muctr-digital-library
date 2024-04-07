@@ -27,14 +27,14 @@ var modelsConnectionString = builder.Configuration.GetConnectionString(
 #region Services
 
 builder.Services.AddDbContext<MDLibraryIdentityDbContext>(options =>
-    options.UseSqlServer(identityConnectionString));
+    options.UseNpgsql(identityConnectionString));
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
     options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<MDLibraryIdentityDbContext>();
 
-builder.Services.AddDbContext<MDLibraryDbContext>(options =>
-    options.UseSqlServer(modelsConnectionString)
+builder.Services.AddDbContext<MDLibraryBusinessDbContext>(options =>
+    options.UseNpgsql(modelsConnectionString)
 );
 
 builder.Services.AddControllersWithViews();

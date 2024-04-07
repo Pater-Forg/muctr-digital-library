@@ -31,8 +31,8 @@ namespace MDLibrary.Models
 
         public static void PopulateFromDataFile(IApplicationBuilder app, IConfiguration configuration)
         {
-            MDLibraryDbContext context = app.ApplicationServices
-                .CreateScope().ServiceProvider.GetRequiredService<MDLibraryDbContext>();
+            MDLibraryBusinessDbContext context = app.ApplicationServices
+                .CreateScope().ServiceProvider.GetRequiredService<MDLibraryBusinessDbContext>();
 
             if (context.Literature.Any() ||
                 context.Authors.Any() ||
@@ -57,7 +57,7 @@ namespace MDLibrary.Models
             context.SaveChanges();
         }
 
-        private static void _proccessModel(JsonLiteratureModel model, MDLibraryDbContext context)
+        private static void _proccessModel(JsonLiteratureModel model, MDLibraryBusinessDbContext context)
         {
             var literatureEntity = new Literature
             {

@@ -14,9 +14,9 @@ namespace MDLibrary.Areas.Admin.Controllers
     [Area("Admin")]
     public class LiteratureController : Controller
     {
-        private readonly MDLibraryDbContext _context;
+        private readonly MDLibraryBusinessDbContext _context;
 
-        public LiteratureController(MDLibraryDbContext context)
+        public LiteratureController(MDLibraryBusinessDbContext context)
         {
             _context = context;
         }

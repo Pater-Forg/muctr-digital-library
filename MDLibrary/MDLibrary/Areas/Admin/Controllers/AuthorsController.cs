@@ -13,8 +13,8 @@ namespace MDLibrary.Areas.Admin.Controllers
 	[Area("Admin")]
 	public class AuthorsController : Controller
 	{
-		private readonly MDLibraryDbContext _context;
-		public AuthorsController(MDLibraryDbContext context)
+		private readonly MDLibraryBusinessDbContext _context;
+		public AuthorsController(MDLibraryBusinessDbContext context)
 		{
 			_context = context;
 		}

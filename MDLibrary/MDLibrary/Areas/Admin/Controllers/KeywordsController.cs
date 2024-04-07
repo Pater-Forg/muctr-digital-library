@@ -13,8 +13,8 @@ namespace MDLibrary.Areas.Admin.Controllers
 	[Area("Admin")]
 	public class KeywordsController : Controller
 	{
-		private readonly MDLibraryDbContext _context;
-		public KeywordsController(MDLibraryDbContext context)
+		private readonly MDLibraryBusinessDbContext _context;
+		public KeywordsController(MDLibraryBusinessDbContext context)
 		{
 			_context = context;
 		}
