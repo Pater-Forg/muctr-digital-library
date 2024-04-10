@@ -170,7 +170,7 @@ namespace MDLibrary.Areas.Admin.Controllers
             literatureToUpdate.LiteratureId = model.Id;
             literatureToUpdate.PublishYear = model.PublishYear;
             literatureToUpdate.PageCount = model.PageCount;
-            literatureToUpdate.Caption = model.Caption;
+            literatureToUpdate.Caption = model.Caption!;
             literatureToUpdate.PublishLocation = model.PublishLocation;
             literatureToUpdate.Publisher = model.Publisher;
             literatureToUpdate.Isbn = model.Isbn;
@@ -264,6 +264,83 @@ namespace MDLibrary.Areas.Admin.Controllers
 					? null
 					: string.Join(", ", literatureEntity.Authors)
 			});
+		}
+
+        public IActionResult Add()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Add(LiteratureEditAndDetailsViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+
+			var literatureToCreate = new Literature
+			{
+				PublishYear = model.PublishYear,
+				PageCount = model.PageCount,
+				Caption = model.Caption!,
+				PublishLocation = model.PublishLocation,
+				Publisher = model.Publisher,
+				Isbn = model.Isbn,
+				Bbc = model.Bbc,
+				Udc = model.Udc,
+				Abstract = model.Abstract,
+				Authors = [],
+				Keywords = []
+			};
+
+			var authors = model.Authors?.Split(", ") ?? [];
+			var keywords = model.Keywords?.Split(", ") ?? [];
+
+			foreach (var name in authors)
+			{
+				var authorFromDb = _context.Authors
+					.Include(a => a.Literature)
+					.FirstOrDefault(a => a.Name == name);
+
+				if (authorFromDb is null)
+				{
+					authorFromDb = new Author { Name = name };
+					_context.Authors.Add(authorFromDb);
+				}
+
+				authorFromDb.Literature.Add(literatureToCreate);
+				literatureToCreate.Authors.Add(authorFromDb);
+			}
+
+			foreach (var keyword in keywords)
+			{
+				var keywordFromDb = _context.Keywords
+					.Include(k => k.Literature)
+					.FirstOrDefault(k => k.Value == keyword);
+
+				if (keywordFromDb is null)
+				{
+					keywordFromDb = new Keyword { Value = keyword };
+					_context.Keywords.Add(keywordFromDb);
+				}
+
+				keywordFromDb.Literature.Add(literatureToCreate);
+				literatureToCreate.Keywords.Add(keywordFromDb);
+			}
+
+			_context.Literature.Add(literatureToCreate);
+			try
+			{
+				await _context.SaveChangesAsync();
+			}
+			catch (DbUpdateException)
+			{
+                ModelState.AddModelError("", "Возникла ошибка при сохранении данных. Попробуйте еще раз.");
+				return View();
+			}
+			return RedirectToAction(nameof(Details), new { id = literatureToCreate.LiteratureId });
 		}
     }
 }

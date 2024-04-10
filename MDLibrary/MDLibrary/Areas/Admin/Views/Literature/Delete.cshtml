@@ -4,7 +4,7 @@
 }
 
 <form asp-area="Admin" asp-controller="Literature" asp-action="Delete" method="post">
-	<h3>Вы действительно хотите удалить статью "@Model.Caption"?</h3>
+	<h3>Вы действительно хотите удалить "@Model.Caption"?</h3>
 	<p class="text-danger">@ViewBag.ErrorMessage</p>
 	<input type="hidden" name="id" value="@Model.Id" />
 	<input type="submit" class="btn btn-danger" value="Удалить" />

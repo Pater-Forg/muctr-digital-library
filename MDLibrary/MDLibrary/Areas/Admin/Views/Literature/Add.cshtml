@@ -1,64 +1,60 @@
 ﻿@model LiteratureEditAndDetailsViewModel
 @{
-	ViewData["Title"] = Model.Caption + " - редактировать";
+	ViewData["Title"] = "Добавление литературы";
 }
 
-<h3>Редактирование</h3>
+<h3>Добавление литературы</h3>
 <form asp-area="Admin" asp-controller="Literature" method="post">
 	<p class="text-danger">@ViewBag.ErrorMessage</p>
 	<div class="form-group">
-		<label asp-for="@Model.Id">ID</label>
-		<input asp-for="@Model.Id" readonly="true" class="form-control" value="@Model.Id" />
-	</div>
-	<div class="form-group">
 		<label asp-for="@Model.Caption">Название</label>
-		<input asp-for="@Model.Caption" class="form-control" value="@Model.Caption" />
+		<input asp-for="@Model.Caption" class="form-control" />
 		<span asp-validation-for="@Model.Caption" class="text-danger"></span>
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.Authors">Авторы</label>
-		<input asp-for="@Model.Authors" class="form-control" value="@Model.Authors" />
+		<input asp-for="@Model.Authors" class="form-control" />
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.Keywords">Ключевые слова</label>
-		<input asp-for="@Model.Keywords" class="form-control" value="@Model.Keywords" />
+		<input asp-for="@Model.Keywords" class="form-control" />
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.PageCount">Количество страниц</label>
-		<input asp-for="@Model.PageCount" type="number" class="form-control" value="@Model.PageCount" />
+		<input asp-for="@Model.PageCount" type="number" class="form-control" />
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.PublishYear">Год издания</label>
-		<input asp-for="@Model.PublishYear" type="number" class="form-control" value="@Model.PublishYear" />
+		<input asp-for="@Model.PublishYear" type="number" class="form-control" />
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.PublishLocation">Место издания</label>
-		<input asp-for="@Model.PublishLocation" class="form-control" value="@Model.PublishLocation" />
+		<input asp-for="@Model.PublishLocation" class="form-control" />
 		<span asp-validation-for="@Model.PublishLocation" class="text-danger"></span>
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.Publisher">Издательство</label>
-		<input asp-for="@Model.Publisher" class="form-control" value="@Model.Publisher" />
+		<input asp-for="@Model.Publisher" class="form-control" />
 		<span asp-validation-for="@Model.Publisher" class="text-danger"></span>
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.Isbn">ISBN</label>
-		<input asp-for="@Model.Isbn" class="form-control" value="@Model.Isbn" />
+		<input asp-for="@Model.Isbn" class="form-control" />
 		<span asp-validation-for="@Model.Isbn" class="text-danger"></span>
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.Bbc">ББК</label>
-		<input asp-for="@Model.Bbc" class="form-control" value="@Model.Bbc" />
+		<input asp-for="@Model.Bbc" class="form-control" />
 		<span asp-validation-for="@Model.Bbc" class="text-danger"></span>
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.Udc">УДК</label>
-		<input asp-for="@Model.Udc" class="form-control" value="@Model.Udc" />
+		<input asp-for="@Model.Udc" class="form-control" />
 		<span asp-validation-for="@Model.Udc" class="text-danger"></span>
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.Abstract">Аннотация</label>
-		<textarea asp-for="@Model.Abstract" class="form-control" rows="5" value="@Model.Abstract"></textarea>
+		<textarea asp-for="@Model.Abstract" class="form-control" rows="5"></textarea>
 	</div>
 	<button type="submit" class="btn btn-primary">Сохранить</button>
 </form>

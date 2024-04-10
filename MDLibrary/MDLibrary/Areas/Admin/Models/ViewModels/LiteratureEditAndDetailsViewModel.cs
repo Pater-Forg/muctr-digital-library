@@ -10,9 +10,9 @@ namespace MDLibrary.Areas.Admin.Models.ViewModels
 
 		public short? PageCount { get; set; }
 
-		[Required]
+		[Required(ErrorMessage = "Это поле должно быть заполнено")]
 		[StringLength(256, ErrorMessage = "Максимальная длина названия 256 символов")]
-		public string Caption { get; set; }
+		public string? Caption { get; set; }
 
 		[StringLength(64, ErrorMessage = "Максимальная длина места издания 64 символа")]
 		public string? PublishLocation { get; set; }
