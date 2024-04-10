@@ -13,6 +13,7 @@
 	<div class="form-group">
 		<label asp-for="@Model.Value">Имя</label>
 		<input asp-for="@Model.Value" class="form-control" value="@Model.Value" />
+		<span asp-validation-for="@Model.Value"></span>
 	</div>
 	<button type="submit" class="btn btn-primary">Сохранить</button>
 </form>

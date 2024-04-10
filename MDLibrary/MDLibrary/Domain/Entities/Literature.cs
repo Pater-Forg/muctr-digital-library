@@ -17,5 +17,12 @@ namespace MDLibrary.Domain.Entities
         public string? Abstract { get; set; }
         public ICollection<Keyword> Keywords { get; set; } = [];
         public ICollection<Author> Authors { get; set; } = [];
-    }
+
+		public override string ToString()
+		{
+            return $"{Authors.First()} {Caption} / " +
+                $"{(Authors.Count <= 3 ? string.Join(", ", Authors) : Authors.First() + "[и др.].")} – " +
+                $"{PublishLocation}: {Publisher}, {PublishYear}. – {PageCount} с.";
+		}
+	}
 }

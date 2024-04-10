@@ -24,7 +24,9 @@ namespace MDLibrary.Areas.Admin.Controllers
 			[FromQuery(Name = "n")] int itemsPerPage = 20
 			)
 		{
-			var keywords = _context.Keywords.Select(k => k);
+			var keywords = _context.Keywords
+				.OrderBy(k => k.KeywordId)
+				.Select(k => k);
 
 			if (!filter.IsNullOrEmpty())
 			{

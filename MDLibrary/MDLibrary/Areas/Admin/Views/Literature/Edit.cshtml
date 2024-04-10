@@ -1,4 +1,4 @@
-﻿@model LiteratureEditViewModel
+﻿@model LiteratureEditAndDetailsViewModel
 @{
 	ViewData["Title"] = Model.Caption + " - редактировать";
 }
@@ -13,6 +13,7 @@
 	<div class="form-group">
 		<label asp-for="@Model.Caption">Название</label>
 		<input asp-for="@Model.Caption" class="form-control" value="@Model.Caption" />
+		<span asp-validation-for="@Model.Caption"></span>
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.Authors">Авторы</label>
@@ -33,22 +34,27 @@
 	<div class="form-group">
 		<label asp-for="@Model.PublishLocation">Место издания</label>
 		<input asp-for="@Model.PublishLocation" class="form-control" value="@Model.PublishLocation" />
+		<span asp-validation-for="@Model.PublishLocation"></span>
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.Publisher">Издательство</label>
 		<input asp-for="@Model.Publisher" class="form-control" value="@Model.Publisher" />
+		<span asp-validation-for="@Model.Publisher"></span>
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.Isbn">ISBN</label>
 		<input asp-for="@Model.Isbn" class="form-control" value="@Model.Isbn" />
+		<span asp-validation-for="@Model.Isbn"></span>
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.Bbc">ББК</label>
 		<input asp-for="@Model.Bbc" class="form-control" value="@Model.Bbc" />
+		<span asp-validation-for="@Model.Bbc"></span>
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.Udc">УДК</label>
 		<input asp-for="@Model.Udc" class="form-control" value="@Model.Udc" />
+		<span asp-validation-for="@Model.Udc"></span>
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.Abstract">Аннотация</label>

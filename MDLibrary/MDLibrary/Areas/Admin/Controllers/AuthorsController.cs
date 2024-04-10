@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,7 +25,9 @@ namespace MDLibrary.Areas.Admin.Controllers
 			[FromQuery(Name = "n")] int itemsPerPage = 20
 			)
 		{
-			var authors = _context.Authors.Select(a => a);
+			var authors = _context.Authors
+				.OrderBy(a => a.AuthorId)
+				.Select(a => a);
 
 			if (!filter.IsNullOrEmpty())
 			{
@@ -153,6 +156,32 @@ namespace MDLibrary.Areas.Admin.Controllers
 				return RedirectToAction("Edit", new { model.Id, saveChangesError = true });
 			}
 			return RedirectToAction(nameof(Index));
+		}
+
+		public IActionResult Details(int? id) {
+			if (id is null)
+			{
+				return new StatusCodeResult(StatusCodes.Status400BadRequest);
+			}
+
+			var author = _context.Authors
+				.Include(a => a.Literature)
+				.AsNoTracking()
+				.FirstOrDefault(a => a.AuthorId == id);
+
+			if (author is null)
+			{
+				return NotFound();
+			}
+
+			return View(new AuthorsDetailsViewModel
+			{
+				Id = author.AuthorId,
+				Name = author.Name,
+				Literature = author.Literature.Select(
+					x => new KeyValuePair<int, string>(x.LiteratureId, x.ToString()))
+					.ToDictionary()
+			});
 		}
 	}
 }

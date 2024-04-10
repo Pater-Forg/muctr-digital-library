@@ -28,6 +28,7 @@ namespace MDLibrary.Areas.Admin.Controllers
             )
         {
             var literatureEntities = _context.Literature
+                .OrderBy(x => x.LiteratureId)
                 .Include(x => x.Authors)
                 .Select(x => x);
 
@@ -128,7 +129,7 @@ namespace MDLibrary.Areas.Admin.Controllers
 				return NotFound();
 			}
 
-            return View(new LiteratureEditViewModel
+            return View(new LiteratureEditAndDetailsViewModel
             {
                 Id = literatureEntity.LiteratureId,
                 PublishYear = literatureEntity.PublishYear,
@@ -151,7 +152,7 @@ namespace MDLibrary.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(LiteratureEditViewModel model)
+        public async Task<IActionResult> Edit(LiteratureEditAndDetailsViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -225,5 +226,44 @@ namespace MDLibrary.Areas.Admin.Controllers
 			}
             return RedirectToAction(nameof(Index));
         }
+
+        public IActionResult Details(int? id)
+        {
+			if (id is null)
+			{
+				return new StatusCodeResult(StatusCodes.Status400BadRequest);
+			}
+
+            var literatureEntity = _context.Literature
+                .Include(x => x.Authors)
+                .Include(x => x.Keywords)
+                .AsNoTracking()
+                .FirstOrDefault(x => x.LiteratureId == id);
+
+            if (literatureEntity is null)
+            {
+                return NotFound();
+            }
+
+			return View(new LiteratureEditAndDetailsViewModel
+			{
+				Id = literatureEntity.LiteratureId,
+				PublishYear = literatureEntity.PublishYear,
+				PageCount = literatureEntity.PageCount,
+				Caption = literatureEntity.Caption,
+				PublishLocation = literatureEntity.PublishLocation,
+				Publisher = literatureEntity.Publisher,
+				Isbn = literatureEntity.Isbn,
+				Bbc = literatureEntity.Bbc,
+				Udc = literatureEntity.Udc,
+				Abstract = literatureEntity.Abstract,
+				Keywords = literatureEntity.Keywords is null
+					? null
+					: string.Join(", ", literatureEntity.Keywords),
+				Authors = literatureEntity.Authors is null
+					? null
+					: string.Join(", ", literatureEntity.Authors)
+			});
+		}
     }
 }
