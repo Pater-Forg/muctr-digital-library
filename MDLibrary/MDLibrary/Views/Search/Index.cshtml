@@ -1,0 +1,57 @@
+﻿@model SearchViewModel
+
+@{
+	ViewData["Title"] = "Поиск";
+}
+
+<div class="row-md-3">
+	<form asp-action="Index" method="get">
+		<div asp-validation-summary="All"></div>
+		<div class="mb-5 form-group">
+			<label asp-for="SearchModel.SearchQuery" class="form-label text-dark">Введите ключевые слова, по которым будет проводиться поиск</label>
+			<input asp-for="SearchModel.SearchQuery" type="text" value="@(Model.SearchModel?.SearchQuery ?? "")" class="form-control" />
+		</div>
+		<div class="mb-5 form-group">
+			<label asp-for="SearchModel.Authors" class="form-label text-dark">Автор: </label>
+			<input asp-for="SearchModel.Authors" type="text" class="form-control" />
+		</div>
+		<div class="mb-5 form-group">
+			<label class="form-label text-dark">Год издания:</label>
+			<div class="row alignment">
+				<div class="mb-5 search_field">
+					@* <label class="col-1 form-group">С</label> *@
+					<input asp-for="SearchModel.PublishYearLower" type="number" placeholder="С" class="form-control" />
+				</div>
+				<div class="mb-5 search_field">
+					@* <label class="col-1 form-group">По</label> *@
+					<input asp-for="SearchModel.PublishYearUpper" type="number" placeholder="ПО" class="form-control" />
+				</div>
+			</div>
+		</div>
+		<div class="mb-5 form-group">
+			<button type="submit" class="bw-90 btn btn-lg btn-primary centering">Искать</button>
+		</div>
+	</form>
+</div>
+@if (Model.SearchResults != null)
+{
+	if (Model.SearchResults.Any())
+	{
+		<p class="form-group">
+			Найдено документов: @Model.PagingInfo.TotalItems
+		</p>
+	}
+	else
+	{
+		<p class="form-group">
+			Результатов не найдено. Попробуйте изменить условия поиска.
+		</p>
+	}
+	foreach (var literature in Model.SearchResults)
+	{
+		await Html.RenderPartialAsync("_ArticleCardPartial", literature);
+	}
+	<div page-model="@Model.PagingInfo" page-action="Index" page-query="@Context.Request.Query"
+		 page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark"
+		 page-class-selected="btn-primary" class="btn-group pull-right m-1"></div>
+}

@@ -70,9 +70,6 @@ html {
   min-height: 100%;
 }
 
-body {
-  margin-bottom: 60px;
-}
 .footer {
   position: absolute;
   bottom: 0;
@@ -80,4 +77,25 @@ body {
   overflow: scroll;
   white-space: nowrap;
   line-height: 60px;
+}
+
+.gradient-custom-navbar {
+    /* fallback for old browsers */
+    background: #1976d2;
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: -webkit-linear-gradient(to right, rgba(25,118,210,1), rgba(37,117,252,1));
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(to right, rgba(25,118,210,1), rgba(37,117,252,1))
+}
+
+.main-container {
+    background-color: white;
+    flex: 1 1 auto;
+    border-radius: 10px;
+    border: 1px solid lightgray;
+}
+
+body {
+    background-image: url(/images/bg.jpg);
+    background-repeat: repeat;
 }

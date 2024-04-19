@@ -1,10 +1,11 @@
-﻿@model LiteratureEditAndDetailsViewModel
+﻿@model LiteratureAddViewModel
 @{
 	ViewData["Title"] = "Добавление литературы";
 }
 
 <h3>Добавление литературы</h3>
-<form asp-area="Admin" asp-controller="Literature" method="post">
+<div class="text-danger" asp-validation-summary="ModelOnly"></div>
+<form asp-area="Admin" asp-controller="Literature" asp-action="Add" method="post" enctype="multipart/form-data">
 	<p class="text-danger">@ViewBag.ErrorMessage</p>
 	<div class="form-group">
 		<label asp-for="@Model.Caption">Название</label>
@@ -51,6 +52,10 @@
 		<label asp-for="@Model.Udc">УДК</label>
 		<input asp-for="@Model.Udc" class="form-control" />
 		<span asp-validation-for="@Model.Udc" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.LiteratureFile">Файл</label>
+		<input asp-for="@Model.LiteratureFile" type="file" class="form-control" />
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.Abstract">Аннотация</label>

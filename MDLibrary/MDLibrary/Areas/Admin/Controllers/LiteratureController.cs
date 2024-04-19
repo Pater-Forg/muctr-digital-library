@@ -5,9 +5,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Canvas.Parser;
+using iText.Kernel.Pdf.Canvas.Parser.Listener;
 
 namespace MDLibrary.Areas.Admin.Controllers
 {
@@ -129,7 +134,7 @@ namespace MDLibrary.Areas.Admin.Controllers
 				return NotFound();
 			}
 
-            return View(new LiteratureEditAndDetailsViewModel
+            return View(new LiteratureEditViewModel
             {
                 Id = literatureEntity.LiteratureId,
                 PublishYear = literatureEntity.PublishYear,
@@ -152,7 +157,7 @@ namespace MDLibrary.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(LiteratureEditAndDetailsViewModel model)
+        public async Task<IActionResult> Edit(LiteratureEditViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -245,7 +250,7 @@ namespace MDLibrary.Areas.Admin.Controllers
                 return NotFound();
             }
 
-			return View(new LiteratureEditAndDetailsViewModel
+			return View(new LiteratureDetailsViewModel
 			{
 				Id = literatureEntity.LiteratureId,
 				PublishYear = literatureEntity.PublishYear,
@@ -273,7 +278,7 @@ namespace MDLibrary.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(LiteratureEditAndDetailsViewModel model)
+        public async Task<IActionResult> Add(LiteratureAddViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -330,6 +335,31 @@ namespace MDLibrary.Areas.Admin.Controllers
 				literatureToCreate.Keywords.Add(keywordFromDb);
 			}
 
+            if (model.LiteratureFile is not null)
+            {
+                try
+                {
+                    var filePath = Path.Combine(LiteratureFile.RootPath, model.LiteratureFile.FileName);
+				    using (FileStream fs = System.IO.File.Create(filePath))
+                    {
+                        await model.LiteratureFile.CopyToAsync(fs);
+                    }
+                    var literatureFileToCreate = new LiteratureFile
+                    {
+                        Literature = literatureToCreate,
+                        Extension = "",
+                        Filename = model.LiteratureFile.FileName
+                    };
+                    _context.LiteratureFiles.Add(literatureFileToCreate);
+                    _ExtractTextFromPdfToDb(literatureToCreate, model.LiteratureFile.FileName);
+                }
+                catch (SystemException)
+                {
+					ModelState.AddModelError("", "Возникла ошибка при сохранении данных. Попробуйте еще раз.");
+					return View();
+				}
+			}
+
 			_context.Literature.Add(literatureToCreate);
 			try
 			{
@@ -342,5 +372,24 @@ namespace MDLibrary.Areas.Admin.Controllers
 			}
 			return RedirectToAction(nameof(Details), new { id = literatureToCreate.LiteratureId });
 		}
-    }
+
+		private void _ExtractTextFromPdfToDb(Literature literature, string fileName)
+		{
+			var path = Path.Combine(LiteratureFile.RootPath, fileName);
+			var pdfReader = new PdfReader(path);
+			var pdfDocument = new PdfDocument(pdfReader);
+
+			for (short page = 1; page <= pdfDocument.GetNumberOfPages(); page++)
+			{
+				ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
+
+                _context.LiteraturePages.Add(new LiteraturePage
+                {
+                    Literature = literature,
+                    PageNumber = page,
+                    Text = PdfTextExtractor.GetTextFromPage(pdfDocument.GetPage(page), strategy)
+                });
+			}
+		}
+	}
 }

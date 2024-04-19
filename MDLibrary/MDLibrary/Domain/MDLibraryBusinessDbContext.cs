@@ -15,13 +15,15 @@ namespace MDLibrary.Domain
         public DbSet<Literature> Literature { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Keyword> Keywords { get; set; }
-        public DbSet<File> Files { get; set; }
+        public DbSet<LiteratureFile> LiteratureFiles { get; set; }
+        public DbSet<LiteraturePage> LiteraturePages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             // For naming conventions purposes. EF uses CamelCase, and Pgsql uses snake_case
             modelBuilder.MigrateTablenamesToPostgres();
+
             // Literature configuration //
 
             modelBuilder.Entity<Literature>(
@@ -36,16 +38,14 @@ namespace MDLibrary.Domain
                     e.Property(p => p.Abstract).HasColumnType("text");
                 });
 
-            // File configuration //
+            // LiteratureFile configuration //
 
-            modelBuilder.Entity<File>(
+            modelBuilder.Entity<LiteratureFile>(
                 e =>
                 {
                     e.Property(p => p.Filename).HasColumnType("varchar(256)");
                     e.Property(p => p.Extension).HasColumnType("varchar(10)");
                 });
-
-            modelBuilder.Entity<File>().Ignore(e => e.Content);
 
             // Keyword configuration //
 
@@ -61,6 +61,14 @@ namespace MDLibrary.Domain
                 e =>
                 {
                     e.Property(p => p.Name).HasColumnType("varchar(128)");
+                });
+
+            // LiteraturePages configuration //
+
+            modelBuilder.Entity<LiteraturePage>(
+                e =>
+                {
+                    e.Property(p => p.Text).HasColumnType("text");
                 });
         }
     }

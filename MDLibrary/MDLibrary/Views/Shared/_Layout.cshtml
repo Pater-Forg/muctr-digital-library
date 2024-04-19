@@ -7,7 +7,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
-
+    <script src="https://kit.fontawesome.com/7a860c81e4.js" crossorigin="anonymous"></script>
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
@@ -22,10 +22,10 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm bg-light gradient-custom-navbar border-bottom box-shadow">
             <div class="container">
-                <a class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none" href="~/">
-                    <object data="~/images/logo.svg" class="bi me-2" width="40" height="60"></object>
+                <a class="d-flex align-items-center mb-md-0 me-md-auto text-decoration-none text-white" href="~/">
+                    <object data="~/images/logo.svg" class="bi me-2" width="24" height="36"></object>
                     <span class="fs-4">МИБС</span>
                 </a>
                 @{
@@ -45,27 +45,19 @@
         </nav>
     </header>
 
-    <div class="container">
-        <main role="main">
+    <div class="container main-container mt-3">
+        <main role="main" class="mt-3">
             @RenderBody()
         </main>
     </div>
 
     <!-- Footer -->
-    <div class="container my-5 mt-auto">
-        <footer class="text-center" style="background-color: #f1f1f1;">
-            <!-- Copyright -->
-            <div class="text-center text-dark p-3" style="background-color: rgba(0, 0, 0, 0.2);">
-                © 2024 - МИБС:
-            </div>
-            <!-- Copyright -->
-        </footer>
-    </div>
+    
     <!-- Footer -->
 
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/js/bootstrap.bundle.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
     <environment exclude="Development">

@@ -3,10 +3,12 @@
 	ViewData["Title"] = "Литература - Админ";
 }
 
-<h1 class="title">Литература</h1>
+<h1 class="title mb-3">Литература</h1>
 <form asp-action="Index" method="get">
-	<input type="text" name="f" value="@ViewData["Filter"]" placeholder="ID, фамилия автора или часть названия" class="form-control" />
-	<input type="submit" class="btn btn-primary" value="Фильтр" />
+	<div class="input-group mb-3">
+		<input type="text" name="f" value="@ViewData["Filter"]" placeholder="ID, фамилия автора или часть названия" class="form-control" />
+		<input type="submit" class="btn btn-primary" value="Фильтр" />
+	</div>
 </form>
 <table class="table table-sm table-striped table-bordered">
 	<thead>
@@ -23,19 +25,21 @@
 			@foreach (var literatureEntity in Model.Literature)
 			{
 				<tr>
-					<td width="40">@literatureEntity.Id</td>
-					<td width="400">@literatureEntity.Caption</td>
-					<td width="400">@literatureEntity.Authors</td>
+					<td width="50">@literatureEntity.Id</td>
+					<td width="500">@literatureEntity.Caption</td>
+					<td width="300">@literatureEntity.Authors</td>
 					<td class="alignment">
-						<a asp-action="Details" asp-route-id="@literatureEntity.Id" class="btn btn-info btn-sm table_button">
-							Подробнее
-						</a>
-						<a asp-action="Edit" asp-route-id="@literatureEntity.Id" class="btn btn-warning btn-sm table_button">
-							Редактировать
-						</a>
-						<a asp-action="Delete" asp-route-id="@literatureEntity.Id" class="btn btn-danger btn-sm table_button">
-							Удалить
-						</a>
+						<div class="d-grid gap-1 mx-auto">
+							<a asp-action="Details" asp-route-id="@literatureEntity.Id" class="btn btn-sm btn-info">
+								Подробнее
+							</a>
+							<a asp-action="Edit" asp-route-id="@literatureEntity.Id" class="btn btn-warning btn-sm table_button">
+								Редактировать
+							</a>
+							<a asp-action="Delete" asp-route-id="@literatureEntity.Id" class="btn btn-danger btn-sm table_button">
+								Удалить
+							</a>
+						</div>
 					</td>
 				</tr>
 			}

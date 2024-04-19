@@ -80,38 +80,6 @@ namespace MDLibrary.Migrations.MDLibraryBusinessDb
                     b.ToTable("authors");
                 });
 
-            modelBuilder.Entity("MDLibrary.Domain.Entities.File", b =>
-                {
-                    b.Property<int>("FileId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("file_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("FileId"));
-
-                    b.Property<string>("Extension")
-                        .IsRequired()
-                        .HasColumnType("varchar(10)")
-                        .HasColumnName("extension");
-
-                    b.Property<string>("Filename")
-                        .IsRequired()
-                        .HasColumnType("varchar(256)")
-                        .HasColumnName("filename");
-
-                    b.Property<int>("LiteratureId")
-                        .HasColumnType("integer")
-                        .HasColumnName("literature_id");
-
-                    b.HasKey("FileId")
-                        .HasName("pk_files");
-
-                    b.HasIndex("LiteratureId")
-                        .HasDatabaseName("ix_files_literature_id");
-
-                    b.ToTable("files");
-                });
-
             modelBuilder.Entity("MDLibrary.Domain.Entities.Keyword", b =>
                 {
                     b.Property<int>("KeywordId")
@@ -184,6 +152,69 @@ namespace MDLibrary.Migrations.MDLibraryBusinessDb
                     b.ToTable("literature");
                 });
 
+            modelBuilder.Entity("MDLibrary.Domain.Entities.LiteratureFile", b =>
+                {
+                    b.Property<int>("LiteratureFileId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("literature_file_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("LiteratureFileId"));
+
+                    b.Property<string>("Extension")
+                        .IsRequired()
+                        .HasColumnType("varchar(10)")
+                        .HasColumnName("extension");
+
+                    b.Property<string>("Filename")
+                        .IsRequired()
+                        .HasColumnType("varchar(256)")
+                        .HasColumnName("filename");
+
+                    b.Property<int>("LiteratureId")
+                        .HasColumnType("integer")
+                        .HasColumnName("literature_id");
+
+                    b.HasKey("LiteratureFileId")
+                        .HasName("pk_literature_files");
+
+                    b.HasIndex("LiteratureId")
+                        .HasDatabaseName("ix_literature_files_literature_id");
+
+                    b.ToTable("literature_files");
+                });
+
+            modelBuilder.Entity("MDLibrary.Domain.Entities.LiteraturePage", b =>
+                {
+                    b.Property<int>("LiteraturePageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("literature_page_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("LiteraturePageId"));
+
+                    b.Property<int>("LiteratureId")
+                        .HasColumnType("integer")
+                        .HasColumnName("literature_id");
+
+                    b.Property<short>("PageNumber")
+                        .HasColumnType("smallint")
+                        .HasColumnName("page_number");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("text");
+
+                    b.HasKey("LiteraturePageId")
+                        .HasName("pk_literature_pages");
+
+                    b.HasIndex("LiteratureId")
+                        .HasDatabaseName("ix_literature_pages_literature_id");
+
+                    b.ToTable("literature_pages");
+                });
+
             modelBuilder.Entity("AuthorLiterature", b =>
                 {
                     b.HasOne("MDLibrary.Domain.Entities.Author", null)
@@ -218,14 +249,26 @@ namespace MDLibrary.Migrations.MDLibraryBusinessDb
                         .HasConstraintName("fk_keyword_literature_literature_literature_id");
                 });
 
-            modelBuilder.Entity("MDLibrary.Domain.Entities.File", b =>
+            modelBuilder.Entity("MDLibrary.Domain.Entities.LiteratureFile", b =>
                 {
                     b.HasOne("MDLibrary.Domain.Entities.Literature", "Literature")
                         .WithMany()
                         .HasForeignKey("LiteratureId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_files_literature_literature_id");
+                        .HasConstraintName("fk_literature_files_literature_literature_id");
+
+                    b.Navigation("Literature");
+                });
+
+            modelBuilder.Entity("MDLibrary.Domain.Entities.LiteraturePage", b =>
+                {
+                    b.HasOne("MDLibrary.Domain.Entities.Literature", "Literature")
+                        .WithMany()
+                        .HasForeignKey("LiteratureId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_literature_pages_literature_literature_id");
 
                     b.Navigation("Literature");
                 });

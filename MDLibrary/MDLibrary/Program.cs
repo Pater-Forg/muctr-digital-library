@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Builder;
-using MDLibrary.Areas.Identity.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MDLibrary.Domain;
 using MDLibrary.Models;
+using MDLibrary.Domain.Entities;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,6 +77,13 @@ app.MapControllerRoute(
 
 #endregion
 
+IdentitySeedData.AddAdminUser(app, builder.Configuration);
 SeedData.PopulateFromDataFile(app, builder.Configuration);
+
+LiteratureFile.RootPath = builder.Configuration["RootPathToLiteratureFiles"]
+    ?? throw new InvalidOperationException("RootPathToLiteratureFiles not found");
+
+if (!Directory.Exists(LiteratureFile.RootPath))
+	Directory.CreateDirectory(LiteratureFile.RootPath);
 
 app.Run();

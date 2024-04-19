@@ -83,7 +83,7 @@ namespace MDLibrary.Migrations.MDLibraryBusinessDb
                     b.ToTable("authors");
                 });
 
-            modelBuilder.Entity("MDLibrary.Domain.Entities.File", b =>
+            modelBuilder.Entity("MDLibrary.Domain.Entities.LiteratureFile", b =>
                 {
                     b.Property<int>("FileId")
                         .ValueGeneratedOnAdd()
@@ -221,7 +221,7 @@ namespace MDLibrary.Migrations.MDLibraryBusinessDb
                         .HasConstraintName("fk_keyword_literature_literature_literature_id");
                 });
 
-            modelBuilder.Entity("MDLibrary.Domain.Entities.File", b =>
+            modelBuilder.Entity("MDLibrary.Domain.Entities.LiteratureFile", b =>
                 {
                     b.HasOne("MDLibrary.Domain.Entities.Literature", "Literature")
                         .WithMany()

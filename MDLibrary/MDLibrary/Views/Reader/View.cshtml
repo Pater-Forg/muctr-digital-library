@@ -1,0 +1,17 @@
+﻿<input type="hidden" id="file-path" value="@ViewBag.FilePath" />
+<div class="top-bar">
+    <button class="btn" id="prev-page">
+        <i class="fas fa-arrow-circle-left"></i> Назад
+    </button>
+    <button class="btn" id="next-page">
+        Вперед <i class="fas fa-arrow-circle-right"></i>
+    </button>
+    <span class="page-info">
+        Страница <span id="page-num"></span> of <span id="page-count"></span>
+    </span>
+</div>
+
+<canvas id="pdf-render"></canvas>
+
+<script type="module" src="~/lib/pdf-js/pdf.mjs"></script>
+<script type="module" src="~/js/pdf-reader.js"></script>

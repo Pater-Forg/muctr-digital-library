@@ -3,10 +3,12 @@
 	ViewData["Title"] = "Авторы - Админ";
 }
 
-<h1 class="title">Авторы</h1>
+<h1 class="title mb-3">Авторы</h1>
 <form asp-action="Index" method="get">
-	<input type="text" name="f" value="@ViewData["Filter"]" placeholder="ID или фамилия автора" class="form-control" />
-	<input type="submit" class="btn btn-primary" value="Фильтр" />
+	<div class="input-group mb-3">
+		<input type="text" name="f" value="@ViewData["Filter"]" placeholder="ID или фамилия автора" class="form-control" />
+		<input type="submit" class="btn btn-primary" value="Фильтр" />
+	</div>
 </form>
 <table class="table table-sm table-striped table-bordered">
 	<thead>
@@ -25,15 +27,17 @@
 					<td width="40">@author.Id</td>
 					<td width="800">@author.Name</td>
 					<td class="alignment">
-						<a asp-action="Details" asp-route-id="@author.Id" class="btn btn-info btn-sm table_button">
-							Подробнее
-						</a>
-						<a asp-action="Edit" asp-route-id="@author.Id" class="btn btn-warning btn-sm table_button">
-							Редактировать
-						</a>
-						<a asp-action="Delete" asp-route-id="@author.Id" class="btn btn-danger btn-sm table_button">
-							Удалить
-						</a>
+						<div class="d-grid gap-1 mx-auto">
+							<a asp-action="Details" asp-route-id="@author.Id" class="btn btn-info btn-sm table_button">
+								Подробнее
+							</a>
+							<a asp-action="Edit" asp-route-id="@author.Id" class="btn btn-warning btn-sm table_button">
+								Редактировать
+							</a>
+							<a asp-action="Delete" asp-route-id="@author.Id" class="btn btn-danger btn-sm table_button">
+								Удалить
+							</a>
+						</div>
 					</td>
 				</tr>
 			}
