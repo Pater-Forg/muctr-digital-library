@@ -53,3 +53,8 @@
 		<td>@Model.Abstract</td>
 	</tr>
 </table>
+<span class="mb-3">
+	<a asp-area="" asp-controller="Reader" asp-action="View" asp-route-id="@Model.Id" 
+	   class="btn btn-primary">Читать</a>
+	<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info ms-2">Редактировать</a>
+</span>

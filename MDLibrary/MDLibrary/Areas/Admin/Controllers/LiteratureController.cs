@@ -13,10 +13,12 @@ using System.Threading.Tasks;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MDLibrary.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admins")]
     public class LiteratureController : Controller
     {
         private readonly MDLibraryBusinessDbContext _context;
@@ -151,7 +153,10 @@ namespace MDLibrary.Areas.Admin.Controllers
                     : string.Join(", ", literatureEntity.Keywords),
 				Authors = literatureEntity.Authors is null
 					? null
-					: string.Join(", ", literatureEntity.Authors)
+					: string.Join(", ", literatureEntity.Authors),
+                HasFile = _context.LiteratureFiles
+                                  .Include(f => f.Literature)
+                                  .Any(f => f.Literature.LiteratureId == literatureEntity.LiteratureId)
 			});
 		}
 
@@ -220,7 +225,32 @@ namespace MDLibrary.Areas.Admin.Controllers
 				literatureToUpdate.Keywords.Add(keywordFromDb);
 			}
 
-            _context.Literature.Update(literatureToUpdate);
+			if (model.LiteratureFile is not null)
+			{
+				try
+				{
+					var filePath = Path.Combine(LiteratureFile.RootPath, model.LiteratureFile.FileName);
+					using (FileStream fs = System.IO.File.Create(filePath))
+					{
+						await model.LiteratureFile.CopyToAsync(fs);
+					}
+					var literatureFileToCreate = new LiteratureFile
+					{
+						Literature = literatureToUpdate,
+						Extension = "",
+						Filename = model.LiteratureFile.FileName
+					};
+					_context.LiteratureFiles.Add(literatureFileToCreate);
+					_ExtractTextFromPdfToDb(literatureToUpdate, model.LiteratureFile.FileName);
+				}
+				catch (SystemException)
+				{
+					ModelState.AddModelError("", "Возникла ошибка при сохранении данных. Попробуйте еще раз.");
+					return View();
+				}
+			}
+
+			_context.Literature.Update(literatureToUpdate);
             try
             {
                 await _context.SaveChangesAsync();
@@ -229,7 +259,7 @@ namespace MDLibrary.Areas.Admin.Controllers
             {
 				return RedirectToAction("Edit", new { model.Id, saveChangesError = true });
 			}
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", new { id = model.Id });
         }
 
         public IActionResult Details(int? id)

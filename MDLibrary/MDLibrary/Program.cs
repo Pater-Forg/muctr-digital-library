@@ -32,11 +32,23 @@ builder.Services.AddDbContext<MDLibraryIdentityDbContext>(options =>
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
     options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<MDLibraryIdentityDbContext>();
 
 builder.Services.AddDbContext<MDLibraryBusinessDbContext>(options =>
     options.UseNpgsql(modelsConnectionString)
 );
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    //Location for your Custom Access Denied Page
+    options.AccessDeniedPath = "/Identity/Auth/AccessDenied";
+
+    //Location for your Custom Login Page
+    options.LoginPath = "/Identity/Auth/Login";
+
+    options.LogoutPath = "/Identity/Auth/Logout";
+});
 
 builder.Services.AddControllersWithViews();
 
@@ -64,7 +76,7 @@ app.UseAuthorization();
 
 #region Routes
 
-app.MapRazorPages();
+//app.MapRazorPages();
 //app.MapAreaControllerRoute(name: "admin", areaName: "Admin", pattern: "Admin/{controller=Home}/{action=Index}/{id?}");
 app.MapControllerRoute(
     name: "areas",

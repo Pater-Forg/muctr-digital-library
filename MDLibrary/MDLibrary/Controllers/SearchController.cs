@@ -3,8 +3,8 @@ using MDLibrary.Helpers;
 using MDLibrary.Models;
 using MDLibrary.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using System.Security.Policy;
 
 namespace MDLibrary.Controllers
 {
@@ -51,7 +51,10 @@ namespace MDLibrary.Controllers
 									: string.Join(", ", literature.Keywords),
 						Authors = literature.Authors == null
 									? null
-									: string.Join(", ", literature.Authors)
+									: string.Join(", ", literature.Authors),
+						HasFile = _context.LiteratureFiles
+										  .Include(f => f.Literature)
+										  .Any(f => f.Literature.LiteratureId == literature.LiteratureId)
 					});
 			}
 

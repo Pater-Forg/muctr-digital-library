@@ -1,0 +1,37 @@
+﻿@model LiteratureCardViewModel
+
+@* <h3 class="title">@Model.Caption</h3>
+<div>
+	<p class="article_txt" align="left"><b>Авторы:</b> @Model.Authors</p>
+	<p class="article_txt" align="left"><b>Издательство:</b> @Model.Publisher</p>
+	<p class="article_txt" align="left"><b>Год издания:</b> @Model.PublishYear</p>
+	<p class="article_txt" align="left"><b>ISBN:</b> @Model.Isbn</p>
+	<p class="article_txt" align="left"><b>Количество страниц:</b> @Model.PageCount</p>
+	<p class="article_txt" align="left"><b>Аннотация:</b> @Model.Abstract</p>
+</div> *@
+
+<div class="card w-100 mb-3">
+	<div class="card-body">
+		<h4 class="card-title">@Model.Caption</h4>
+		<ul class="list-group list-group-flush">
+			<li class="list-group-item"><b>Авторы:</b> @Model.Authors</li>
+			<li class="list-group-item"><b>Издательство:</b> @Model.Publisher</li>
+			<li class="list-group-item"><b>Год издания:</b> @Model.PublishYear</li>
+			<li class="list-group-item"><b>ISBN:</b> @Model.Isbn</li>
+			<li class="list-group-item"><b>Количество страниц:</b> @Model.PageCount</li>
+			@if (Model.Abstract != null)
+			{
+				<li class="list-group-item"><b>Аннотация:</b></li>
+			}
+		</ul>
+		@if (Model.Abstract != null)
+		{
+			<p class="card-text">@Model.Abstract</p>
+		}
+		@if (Model.HasFile)
+		{
+			<a asp-controller="Reader" asp-action="View" asp-route-id="@Model.Id"
+			   class="btn btn-primary">Читать</a>
+		}
+	</div>
+</div>

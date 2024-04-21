@@ -1,5 +1,6 @@
 ﻿using MDLibrary.Areas.Admin.Models.ViewModels;
 using MDLibrary.Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 namespace MDLibrary.Areas.Admin.Controllers
 {
 	[Area("Admin")]
+	[Authorize(Roles = "Admins")]
 	public class AuthorsController : Controller
 	{
 		private readonly MDLibraryBusinessDbContext _context;

@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <PackageReference Include="itext" Version="8.0.2" />
-    <PackageReference Include="Microsoft.AspNet.Identity.EntityFramework" Version="2.2.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.3">
@@ -34,6 +33,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Views\Shared\" />
+    <Folder Include="Areas\Identity\Views\Shared\" />
   </ItemGroup>
 
 </Project>

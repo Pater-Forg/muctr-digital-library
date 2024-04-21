@@ -9,7 +9,10 @@ namespace MDLibrary.Helpers
     {
         public static IQueryable<Literature> Search(this DbSet<Literature> set, SearchModel searchModel)
         {
-            var results = set.Include(x => x.Authors).Select(x => x);
+            var results = set.Include(x => x.Authors)
+                             .Include(x => x.Keywords)
+                             .Select(x => x);
+
             if (searchModel.Authors != null)
             {
                 var authors = searchModel.Authors.ToLower().Split(", ");
@@ -18,28 +21,23 @@ namespace MDLibrary.Helpers
                              .Intersect(authors).Any()
                 );
             }
-            if (searchModel.Keywords != null)
-            {
-                var keywords = searchModel.Keywords.ToLower().Split(", ");
-                results = results.Where(x =>
-                    x.Keywords.Select(k => k.ToString().ToLower())
-                              .Intersect(keywords).Any()
-                );
-            }
+            
             if (searchModel.PublishYearLower != null)
             {
                 results = results.Where(x => x.PublishYear >= searchModel.PublishYearLower);
             }
+
             if (searchModel.PublishYearUpper != null)
             {
                 results = results.Where(x => x.PublishYear <= searchModel.PublishYearUpper);
             }
+
             if (searchModel.SearchQuery != null)
             {
                 results = results.Where(x =>
-                    EF.Functions.ILike(x.Caption.ToLower(), $"%{searchModel.SearchQuery}%") ||
+                    EF.Functions.ILike(x.Caption, $"%{searchModel.SearchQuery}%") ||
                     x.Abstract != null &&
-                    EF.Functions.ILike(x.Abstract.ToLower(), $"%{searchModel.SearchQuery}%")
+                    EF.Functions.ILike(x.Abstract, $"%{searchModel.SearchQuery}%")
                 );
             }
 

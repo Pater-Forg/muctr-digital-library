@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace MDLibrary.Areas.Identity.Controllers
 {
+    [Area("Identity")]
     public class AuthController : Controller
     {
         private readonly SignInManager<IdentityUser> _signInManager;
@@ -33,13 +34,24 @@ namespace MDLibrary.Areas.Identity.Controllers
 
             if (result.Succeeded)
             {
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Home", new { area = "" });
             }
             else
             {
                 ModelState.AddModelError("", "Не удалось произвести вход");
                 return View();
             }
+        }
+
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home", new { area = "" });
+        }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }

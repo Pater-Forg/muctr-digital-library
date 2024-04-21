@@ -7,29 +7,60 @@
 <div class="row-md-3">
 	<form asp-action="Index" method="get">
 		<div asp-validation-summary="All"></div>
-		<div class="mb-5 form-group">
-			<label asp-for="SearchModel.SearchQuery" class="form-label text-dark">Введите ключевые слова, по которым будет проводиться поиск</label>
-			<input asp-for="SearchModel.SearchQuery" type="text" value="@(Model.SearchModel?.SearchQuery ?? "")" class="form-control" />
+		<div class="mb-2 row">
+			<label asp-for="SearchModel.SearchQuery" class="col-2 col-form-label text-dark">Что ищем?</label>
+			<div class="col-10">
+				<input asp-for="SearchModel.SearchQuery" type="text" value="@(Model.SearchModel?.SearchQuery ?? "")" class="form-control" />
+			</div>
 		</div>
-		<div class="mb-5 form-group">
-			<label asp-for="SearchModel.Authors" class="form-label text-dark">Автор: </label>
-			<input asp-for="SearchModel.Authors" type="text" class="form-control" />
-		</div>
-		<div class="mb-5 form-group">
-			<label class="form-label text-dark">Год издания:</label>
-			<div class="row alignment">
-				<div class="mb-5 search_field">
-					@* <label class="col-1 form-group">С</label> *@
-					<input asp-for="SearchModel.PublishYearLower" type="number" placeholder="С" class="form-control" />
+		<div class="mb-2 row">
+			<div class="col-2">Где ищем?</div>
+			<div class="col-5">
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" checked asp-for="SearchModel.SearchInCaption"/>
+					<label class="form-check-label">В названии литературы</label>
 				</div>
-				<div class="mb-5 search_field">
-					@* <label class="col-1 form-group">По</label> *@
-					<input asp-for="SearchModel.PublishYearUpper" type="number" placeholder="ПО" class="form-control" />
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" asp-for="SearchModel.SearchInKeywords"/>
+					<label class="form-check-label">В ключевых словах</label>
+				</div>
+			</div>
+			<div class="col-5">
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" checked asp-for="SearchModel.SearchInAbstract"/>
+					<label class="form-check-label">В аннотации</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" asp-for="SearchModel.SearchInText"/>
+					<label class="form-check-label">В тексте литературы</label>
 				</div>
 			</div>
 		</div>
-		<div class="mb-5 form-group">
-			<button type="submit" class="bw-90 btn btn-lg btn-primary centering">Искать</button>
+		<div class="mb-4 row">
+			<label asp-for="SearchModel.Authors" class="col-2 col-form-label text-dark">Авторы: </label>
+			<div class="col-10">
+				<input asp-for="SearchModel.Authors" type="text" class="form-control" />
+			</div>
+		</div>
+		<div class="mb-2 form-group">
+			<label class="form-label text-dark">Год издания:</label>
+			<div class="row alignment">
+				<div class="col-1">
+					<label>С</label>
+				</div>
+				<div class="col-2">
+					<input asp-for="SearchModel.PublishYearLower" type="number" class="form-control" />
+				</div>
+				<div class="col-1">
+					<label class="col">По</label>
+				</div>
+				<div class="col-2">
+					<input asp-for="SearchModel.PublishYearUpper" type="number" class="form-control" />
+				</div>
+			</div>
+		</div>
+		<div class="mb-5 mt-4 form-group">
+			<button type="submit" class="bw-90 btn btn-primary centering">Искать</button>
 		</div>
 	</form>
 </div>
@@ -49,7 +80,7 @@
 	}
 	foreach (var literature in Model.SearchResults)
 	{
-		await Html.RenderPartialAsync("_ArticleCardPartial", literature);
+		await Html.RenderPartialAsync("_LiteratureCardPartial", literature);
 	}
 	<div page-model="@Model.PagingInfo" page-action="Index" page-query="@Context.Request.Query"
 		 page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark"

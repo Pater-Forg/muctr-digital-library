@@ -4,34 +4,41 @@
 @inject UserManager<IdentityUser> UserManager
 
 <ul class="navbar-nav">
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Админ
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" asp-area="Admin" asp-controller="Literature" asp-action="Index">Литература</a></li>
-            <li><a class="dropdown-item" asp-area="Admin" asp-controller="Authors" asp-action="Index">Авторы</a></li>
-            <li><a class="dropdown-item" asp-area="Admin" asp-controller="Keywords" asp-action="Index">Ключевые слова</a></li>
-        </ul>
+    <li class="nav-item text-white">
+        <a class="nav-link text-white" asp-area="" asp-controller="Search" asp-action="Index"><i class="fa-solid fa-magnifying-glass"></i></a>
     </li>
 @if (SignInManager.IsSignedIn(User))
 {
+    if (User.IsInRole("Admins"))
+    {
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Админ
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Literature" asp-action="Index">Литература</a></li>
+                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Authors" asp-action="Index">Авторы</a></li>
+                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Keywords" asp-action="Index">Ключевые слова</a></li>
+            </ul>
+        </li>
+    }
     <li class="nav-item text-white">
-        <a id="manage" class="nav-link text-white" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@UserManager.GetUserName(User)</a>
+            <a id="manage" class="nav-link text-white" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@UserManager.GetUserName(User)</a>
     </li>
     <li class="nav-item text-white">
-        <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+        @* <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
             <button id="logout" type="submit" class="nav-link btn btn-link border-0 text-white">Выйти</button>
-        </form>
+        </form> *@
+        <a class="nav-link text-white" asp-area="Identity" asp-controller="Auth" asp-action="Logout">Выйти</a>
     </li>
 }
 else
 {
     <li class="nav-item">
-        <a class="nav-link text-white" id="register" asp-area="Identity" asp-page="/Account/Register">Регистрация</a>
+        <a class="nav-link text-white" id="register" asp-area="Identity" asp-controller="Auth" asp-action="Register">Регистрация</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link text-white" id="login" asp-area="Identity" asp-page="/Account/Login">Вход</a>
+            <a class="nav-link text-white" id="login" asp-area="Identity" asp-controller="Auth" asp-action="Login">Вход</a>
     </li>
 }
 </ul>

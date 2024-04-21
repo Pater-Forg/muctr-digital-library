@@ -4,7 +4,7 @@
 }
 
 <h3>Редактирование</h3>
-<form asp-area="Admin" asp-controller="Literature" method="post">
+<form asp-area="Admin" asp-controller="Literature" method="post" enctype="multipart/form-data">
 	<p class="text-danger">@ViewBag.ErrorMessage</p>
 	<div class="form-group mb-2">
 		<label asp-for="@Model.Id">ID</label>
@@ -57,8 +57,16 @@
 		<span asp-validation-for="@Model.Udc" class="text-danger"></span>
 	</div>
 	<div class="form-group mb-2">
-		<label asp-for="@Model.Abstract">Аннотация</label>
-		<textarea asp-for="@Model.Abstract" class="form-control" rows="5" value="@Model.Abstract"></textarea>
+		<label asp-for="@Model.LiteratureFile">Файл</label>
+		<input asp-for="@Model.LiteratureFile" type="file" class="form-control" />
+		@if (Model.HasFile)
+		{
+			<p class="text-warning">С данным экземпляром уже ассоциируется файл</p>
+		}
 	</div>
-	<button type="submit" class="btn btn-primary">Сохранить</button>
+	<div class="form-group mb-3">
+		<label asp-for="@Model.Abstract">Аннотация</label>
+		<textarea asp-for="@Model.Abstract" class="form-control" rows="8" value="@Model.Abstract"></textarea>
+	</div>
+	<button type="submit" class="btn btn-primary mb-5">Сохранить</button>
 </form>
