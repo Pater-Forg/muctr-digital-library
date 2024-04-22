@@ -9,6 +9,7 @@ using MDLibrary.Domain;
 using MDLibrary.Models;
 using MDLibrary.Domain.Entities;
 using System.IO;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +56,11 @@ builder.Services.AddControllersWithViews();
 #endregion
 
 var app = builder.Build();
+
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+	ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
 #region EnvironmentConfiguration
 
