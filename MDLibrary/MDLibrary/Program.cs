@@ -31,7 +31,7 @@ var modelsConnectionString = builder.Configuration.GetConnectionString(
 builder.Services.AddDbContext<MDLibraryIdentityDbContext>(options =>
     options.UseNpgsql(identityConnectionString));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+builder.Services.AddDefaultIdentity<LibraryUser>(options =>
     options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<MDLibraryIdentityDbContext>();

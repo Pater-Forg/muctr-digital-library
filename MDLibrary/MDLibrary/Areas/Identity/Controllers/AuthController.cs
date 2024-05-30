@@ -1,4 +1,5 @@
 ﻿using MDLibrary.Areas.Identity.Models.ViewModels;
+using MDLibrary.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,9 +10,9 @@ namespace MDLibrary.Areas.Identity.Controllers
     [Area("Identity")]
     public class AuthController : Controller
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly SignInManager<LibraryUser> _signInManager;
 
-        public AuthController(SignInManager<IdentityUser> signInManager)
+        public AuthController(SignInManager<LibraryUser> signInManager)
         {
             _signInManager = signInManager;
         }

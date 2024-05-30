@@ -1,4 +1,5 @@
 ﻿using MDLibrary.Domain;
+using MDLibrary.Domain.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -13,8 +14,8 @@ namespace MDLibrary.Models
             // get dependecies
             MDLibraryIdentityDbContext context = app.ApplicationServices
                 .CreateScope().ServiceProvider.GetRequiredService<MDLibraryIdentityDbContext>();
-            UserManager<IdentityUser> userManager = app.ApplicationServices
-                .CreateScope().ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            UserManager<LibraryUser> userManager = app.ApplicationServices
+                .CreateScope().ServiceProvider.GetRequiredService<UserManager<LibraryUser>>();
             RoleManager<IdentityRole> roleManager = app.ApplicationServices
                 .CreateScope().ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
@@ -30,7 +31,7 @@ namespace MDLibrary.Models
                     await roleManager.CreateAsync(new IdentityRole(role));
                 }
 
-                var user = new IdentityUser
+                var user = new LibraryUser
                 {
                     UserName = username,
                     Email = email,

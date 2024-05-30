@@ -1,11 +1,11 @@
+using MDLibrary.Domain.Entities;
 using MDLibrary.Helpers;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace MDLibrary.Domain;
 
-public class MDLibraryIdentityDbContext : IdentityDbContext<IdentityUser>
+public class MDLibraryIdentityDbContext : IdentityDbContext<LibraryUser>
 {
     public MDLibraryIdentityDbContext(DbContextOptions<MDLibraryIdentityDbContext> options)
         : base(options)

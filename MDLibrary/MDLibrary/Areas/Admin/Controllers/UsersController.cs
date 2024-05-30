@@ -1,4 +1,5 @@
 ﻿using MDLibrary.Areas.Admin.Models.ViewModels;
+using MDLibrary.Domain.Entities;
 using MDLibrary.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -17,11 +18,11 @@ namespace LAS.Demo.Areas.Admin.Controllers
 	[Authorize(Roles = "Admins")]
 	public class UsersController : Controller
 	{
-		private readonly UserManager<IdentityUser> _userManager;
+		private readonly UserManager<LibraryUser> _userManager;
 		private readonly RoleManager<IdentityRole> _roleManager;
 		public int ItemsPerPage = 20;
 
-		public UsersController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+		public UsersController(UserManager<LibraryUser> userManager, RoleManager<IdentityRole> roleManager)
 		{
 			_userManager = userManager;
 			_roleManager = roleManager;
