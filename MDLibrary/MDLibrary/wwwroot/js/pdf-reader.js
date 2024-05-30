@@ -45,7 +45,7 @@ function renderPage(num) {
     });
 
     // Update page counters
-    document.getElementById('page-num').textContent = num;
+    document.getElementById('page-num').value = num;
 }
 
 /**
@@ -64,6 +64,7 @@ function queueRenderPage(num) {
  * Displays previous page.
  */
 function onPrevPage() {
+    $("html, body").animate({ scrollTop: 0 }, "fast");
     if (pageNum <= 1) {
         return;
     }
@@ -76,6 +77,7 @@ document.getElementById('prev-page').addEventListener('click', onPrevPage);
  * Displays next page.
  */
 function onNextPage() {
+    $("html, body").animate({ scrollTop: 0 }, "fast");
     if (pageNum >= pdfDoc.numPages) {
         return;
     }

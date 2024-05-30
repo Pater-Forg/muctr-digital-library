@@ -39,7 +39,8 @@
 		<div class="mb-4 row">
 			<label asp-for="SearchModel.Authors" class="col-2 col-form-label text-dark">Авторы: </label>
 			<div class="col-10">
-				<input asp-for="SearchModel.Authors" type="text" class="form-control" />
+				<input id="livesearchauthors" asp-for="SearchModel.Authors" type="text" class="form-control" />
+				<div id="authorsresult" class="list-group"></div>
 			</div>
 		</div>
 		<div class="mb-2 form-group">
@@ -82,7 +83,52 @@
 	{
 		await Html.RenderPartialAsync("_LiteratureCardPartial", literature);
 	}
-	<div page-model="@Model.PagingInfo" page-action="Index" page-query="@Context.Request.Query"
-		 page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark"
-		 page-class-selected="btn-primary" class="btn-group pull-right m-1"></div>
+	<div class="d-flex mb-3 justify-content-center">
+		<div page-model="@Model.PagingInfo" page-action="Index" page-query="@Context.Request.Query"
+			 page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark"
+			 page-class-selected="btn-primary" class="btn-group pull-right m-1"></div>
+	</div>
 }
+<script type="text/javascript">
+	let timeout = null;
+
+	document.getElementById('livesearchauthors').addEventListener('keyup', function (e) {
+		clearTimeout(timeout)
+		timeout = setTimeout(function () {
+			LiveSearch()
+		}, 800);
+	});
+
+	function LiveSearch() {
+		//Get the input value
+		let value = document.getElementById('livesearchauthors').value
+
+		$.ajax({
+			type: "POST",
+			url: "/LiveSearch/Authors",
+			// Attach the value to a parameter called search
+			data: { query: value },
+			datatype: "html",
+			success: function (data) {
+				// Insert the returned search results html into the result element
+				$('#authorsresult').html(data);
+			}
+		});
+	}
+
+	let authors = [];
+
+	function AppendTextToInput(authorName) {
+		authors.push(authorName);
+		$('#livesearchauthors').val(authors.join(', '));
+		document.getElementById('livesearchauthors').focus();
+	}
+
+	const authorsInput = document.getElementById('livesearchauthors');
+
+	authorsInput.addEventListener('input', function () {
+		if (!this.value) {
+			authors = [];
+		}
+	})
+</script>

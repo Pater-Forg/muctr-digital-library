@@ -55,7 +55,7 @@ namespace MDLibrary.Domain
                     e.Property(p => p.Value).HasColumnType("varchar(256)");
                 });
 
-            // Author configuration //
+            // AuthorLiveSearch configuration //
 
             modelBuilder.Entity<Author>(
                 e =>

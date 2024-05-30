@@ -1,0 +1,11 @@
+﻿@model IdentityUser
+@{
+	ViewData["Title"] = Model.UserName + " - удалить";
+}
+
+<form asp-area="Admin" asp-controller="Users" asp-action="Delete" method="post">
+	<h3>Вы действительно хотите удалить пользователя @Model.UserName?</h3>
+	<p class="text-danger">@ViewBag.ErrorMessage</p>
+	<input type="hidden" name="id" value="@Model.Id" />
+	<input type="submit" class="btn btn-danger" value="Удалить" />
+</form>

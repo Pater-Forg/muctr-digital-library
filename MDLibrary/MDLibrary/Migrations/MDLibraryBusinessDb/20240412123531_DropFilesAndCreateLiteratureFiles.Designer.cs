@@ -63,7 +63,7 @@ namespace MDLibrary.Migrations.MDLibraryBusinessDb
                     b.ToTable("keyword_literature");
                 });
 
-            modelBuilder.Entity("MDLibrary.Domain.Entities.Author", b =>
+            modelBuilder.Entity("MDLibrary.Domain.Entities.AuthorLiveSearch", b =>
                 {
                     b.Property<int>("AuthorId")
                         .ValueGeneratedOnAdd()
@@ -189,7 +189,7 @@ namespace MDLibrary.Migrations.MDLibraryBusinessDb
 
             modelBuilder.Entity("AuthorLiterature", b =>
                 {
-                    b.HasOne("MDLibrary.Domain.Entities.Author", null)
+                    b.HasOne("MDLibrary.Domain.Entities.AuthorLiveSearch", null)
                         .WithMany()
                         .HasForeignKey("AuthorsAuthorId")
                         .OnDelete(DeleteBehavior.Cascade)

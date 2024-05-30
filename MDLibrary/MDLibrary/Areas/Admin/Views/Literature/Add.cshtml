@@ -14,7 +14,8 @@
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.Authors">Авторы</label>
-		<input asp-for="@Model.Authors" class="form-control" />
+		<input id="livesearchauthors" asp-for="@Model.Authors" class="form-control" />
+		<div id="authorsresult" class="list-group"></div>
 	</div>
 	<div class="form-group">
 		<label asp-for="@Model.Keywords">Ключевые слова</label>
@@ -63,3 +64,47 @@
 	</div>
 	<button type="submit" class="btn btn-primary">Сохранить</button>
 </form>
+
+<script type="text/javascript">
+	let timeout = null;
+
+	document.getElementById('livesearchauthors').addEventListener('keyup', function (e) {
+		clearTimeout(timeout)
+		timeout = setTimeout(function () {
+			LiveSearch()
+		}, 800);
+	});
+
+	function LiveSearch() {
+		//Get the input value
+		let value = document.getElementById('livesearchauthors').value
+
+		$.ajax({
+			type: "POST",
+			url: "/LiveSearch/Authors",
+			// Attach the value to a parameter called search
+			data: { query: value },
+			datatype: "html",
+			success: function (data) {
+				// Insert the returned search results html into the result element
+				$('#authorsresult').html(data);
+			}
+		});
+	}
+
+	let authors = [];
+
+	function AppendTextToInput(authorName) {
+		authors.push(authorName);
+		$('#livesearchauthors').val(authors.join(', '));
+		document.getElementById('livesearchauthors').focus();
+	}
+
+	const authorsInput = document.getElementById('livesearchauthors');
+
+	authorsInput.addEventListener('input', function () {
+		if (!this.value) {
+			authors = [];
+		}
+	})
+</script>

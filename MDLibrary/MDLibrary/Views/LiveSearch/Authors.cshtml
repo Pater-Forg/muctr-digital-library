@@ -1,0 +1,10 @@
+﻿@model IEnumerable<AuthorLiveSearch>
+
+@foreach (var author in Model)
+{
+	<div id="@author.Id" class="list-group-item list-group-item-action" onclick="AppendTextToInput('@author.Name')">
+		<div>
+			@author.Name
+		</div>
+	</div>
+}

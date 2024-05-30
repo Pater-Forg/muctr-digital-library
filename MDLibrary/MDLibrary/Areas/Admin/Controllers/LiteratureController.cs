@@ -46,7 +46,7 @@ namespace MDLibrary.Areas.Admin.Controllers
                 literatureEntities = from x in literatureEntities
                                      where
                                         (id != 0 && x.LiteratureId == id) ||
-                                        EF.Functions.Like(x.Caption, $"%{filter}%") ||
+                                        EF.Functions.ILike(x.Caption, $"%{filter}%") ||
                                         x.Authors.Any(a => EF.Functions.Like(a.Name, $"%{filter}%"))
                                      select x;
             }
@@ -297,7 +297,10 @@ namespace MDLibrary.Areas.Admin.Controllers
 					: string.Join(", ", literatureEntity.Keywords),
 				Authors = literatureEntity.Authors is null
 					? null
-					: string.Join(", ", literatureEntity.Authors)
+					: string.Join(", ", literatureEntity.Authors),
+				HasFile = _context.LiteratureFiles
+						          .Include(f => f.Literature)
+						          .Any(f => f.Literature.LiteratureId == literatureEntity.LiteratureId)
 			});
 		}
 

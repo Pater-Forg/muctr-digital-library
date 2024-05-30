@@ -1,0 +1,52 @@
+﻿@model UserDetailsViewModel
+@{
+	ViewData["Title"] = Model.Name + " - подробнее";
+}
+
+<table class="table">
+	<tr>
+		<th>ID:</th>
+		<td>@Model.Id</td>
+	</tr>
+	<tr>
+		<th>Имя:</th>
+		<td>@Model.Name</td>
+	</tr>
+	<tr>
+		<th>E-mail:</th>
+		<td>@Model.Email</td>
+	</tr>
+	<tr>
+		<th>E-mail подтвержден:</th>
+		<td>@(Model.EmailConfirmed ? "Да" : "Нет")</td>
+	</tr>
+	<tr>
+		<th>Телефон:</th>
+		<td>@Model.PhoneNumber</td>
+	</tr>
+	<tr>
+		<th>Телефон подтвержден:</th>
+		<td>@(Model.PhoneNumberConfirmed ? "Да" : "Нет")</td>
+	</tr>
+	<tr>
+		<th>Роли</th>
+		<td>
+			<form asp-area="Admin" asp-controller="Users" asp-action="Details" method="post">
+				@for (var i = 0; i < Model.RoleCheckboxes.Count(); i++)
+				{
+					<div class="mb-3">
+						<input type="checkbox" asp-for="@Model.RoleCheckboxes[i].IsChecked" class="form-check-input" />
+						<label class="form-check-label" asp-for="@Model.RoleCheckboxes[i].IsChecked">
+							@Model.RoleCheckboxes[i].RoleName
+						</label>
+						<input type="hidden" asp-for="@Model.RoleCheckboxes[i].RoleId" />
+						<input type="hidden" asp-for="@Model.RoleCheckboxes[i].RoleName" />
+					</div>
+				}
+				<div class="mb-1">
+					<input class="btn btn-sm btn-success" type="submit" value="Изменить роли" />
+				</div>
+			</form>
+		</td>
+	</tr>
+</table>
