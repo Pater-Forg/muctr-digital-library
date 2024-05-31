@@ -32,9 +32,11 @@ builder.Services.AddDbContext<MDLibraryIdentityDbContext>(options =>
     options.UseNpgsql(identityConnectionString));
 
 builder.Services.AddDefaultIdentity<LibraryUser>(options =>
-    options.SignIn.RequireConfirmedAccount = false)
-    .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<MDLibraryIdentityDbContext>();
+{
+    options.SignIn.RequireConfirmedAccount = true;
+    options.Password.RequiredLength = 8;
+    options.User.RequireUniqueEmail = true;
+}).AddRoles<IdentityRole>().AddEntityFrameworkStores<MDLibraryIdentityDbContext>();
 
 builder.Services.AddDbContext<MDLibraryBusinessDbContext>(options =>
     options.UseNpgsql(modelsConnectionString)

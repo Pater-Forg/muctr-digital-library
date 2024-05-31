@@ -1,0 +1,68 @@
+﻿@model AccountViewModel
+@{
+	ViewData["Title"] = "Профиль";
+}
+<div asp-validation-summary="ModelOnly" class="text-danger">
+
+</div>
+@if (ViewData.TryGetValue("Status", out var status))
+{
+	if ((bool)status)
+	{
+		<div id="successPopup" class="modal fade" tabindex="-1" aria-hidden="false">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Редактирование аккаунта</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<p>Персональная информация успешно изменена</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			$(window).on('load', function () {
+				$('#successPopup').modal('show');
+			});
+		</script>
+	}
+}
+<div class="row">
+	@{
+		await Html.RenderPartialAsync("_manageNav");
+	}
+	<form asp-area="Identity" asp-controller="Account" asp-action="Index" method="post" class="col-10">
+		<div class="mb-3">
+			<label asp-for="@Model.UserName" class="form-label">Имя пользователя</label>
+			<input asp-for="@Model.UserName" class="form-control" type="text" disabled/>
+		</div>
+		<div class="mb-3">
+			<label asp-for="@Model.Email" class="form-label">E-mail</label>
+			<input asp-for="@Model.Email" class="form-control" disabled/>
+		</div>
+		<div class="mb-3">
+			<label asp-for="@Model.PhoneNumber" class="form-label">Номер телефона</label>
+			<input asp-for="@Model.PhoneNumber" class="form-control" disabled/>
+		</div>
+		<div id="btnGroup" class="btn-group">
+			<button id="editButton" class="btn btn-primary">Редактировать</button>
+			@* <button id="submitButton" type="submit" disabled class="btn btn-success ms-2">Сохранить</button> *@
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+	$('#navAccount').addClass('active');
+	document.getElementById('editButton').addEventListener('click', allowEditing, false);
+
+	function allowEditing(e) {
+		e.preventDefault();
+
+		$('#btnGroup').append('<button id="submitButton" type="submit" class="btn btn-success ms-2">Сохранить</button>');
+		$('#UserName').removeAttr('disabled');
+		$('#Email').removeAttr('disabled');
+		$('#PhoneNumber').removeAttr('disabled');
+		$('#editButton').attr('disabled', 'disabled');
+	}
+</script>

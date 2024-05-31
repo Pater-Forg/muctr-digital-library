@@ -1,0 +1,16 @@
+﻿@{
+	ViewData["Title"] = "Закладки";
+}
+<div class="row">
+	@{
+		await Html.RenderPartialAsync("_manageNav");
+	}
+	<div class="col-10">
+		<h1>Здесь будут ваши закладки</h1>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+	$('#navBookmarks').addClass('active');
+</script>
