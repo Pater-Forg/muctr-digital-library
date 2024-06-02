@@ -1,19 +1,23 @@
 ﻿<input type="hidden" id="file-path" value="@ViewBag.FilePath" />
+<div class="input-group mb-3">
+    <input class="form-control" type="number" id="page-input" />
+    <button id="go-to-page" class="btn btn-outline-secondary">Перейти</button>
+</div>
 <div class="text-center">
     <div class="top-bar mb-3 sticky-top bg-white">
         <button class="btn" id="prev-page">
             <i class="fas fa-arrow-circle-left"></i> Назад
         </button>
-        @* <span class="page-info">
+        <span class="page-info">
             <span id="page-num"></span> / <span id="page-count"></span>
-        </span> *@
-        <span>
+        </span>
+        @* <span>
             <span>
                 <input class="col-1 text-center" inputmode="numeric" id="page-num" />
             </span>
             /
             <span id="page-count"></span>
-        </span>
+        </span> *@
         <button class="btn" id="next-page">
             Вперед <i class="fas fa-arrow-circle-right"></i>
         </button>
@@ -26,14 +30,11 @@
 
 <script type="module" src="~/lib/pdf-js/pdf.mjs"></script>
 <script type="module" src="~/js/pdf-reader.js"></script>
-<script type="text/javascript">
-    const pageNumInput = document.getElementById('page-num');
-    $(document).ready(function () {
-        pageNumInput.addEventListener("keydown", function (e) {
-            if (!e) { var e = window.event; }
-            e.preventDefault();
-            if (e.keyCode == 13) { renderPage(pageNumInput.value); }
-        }, false)
-    })
 
-</script>
+@* <script type="text/javascript">
+    let pageInput = document.getElementById('page-input');
+    document.getElementById('go-to-page').addEventListener('click', function (e) {
+        e.preventDefault();
+        queueRenderPage(pageInput.value);
+    });    
+</script> *@

@@ -12,7 +12,8 @@ var pdfDoc = null,
     pageNumPending = null,
     scale = 1.5,
     canvas = document.getElementById('pdf-render'),
-    ctx = canvas.getContext('2d');
+    ctx = canvas.getContext('2d'),
+    pageInput = document.getElementById('page-input');
 
 /**
  * Get page info from document, resize canvas accordingly, and render page.
@@ -45,7 +46,7 @@ function renderPage(num) {
     });
 
     // Update page counters
-    document.getElementById('page-num').value = num;
+    document.getElementById('page-num').textContent = num;
 }
 
 /**
@@ -96,3 +97,16 @@ pdfjsLib.getDocument(url).promise.then(function (pdfDoc_) {
     // Initial/first page rendering
     renderPage(pageNum);
 });
+
+function goToPage() {
+    pageNum = Number(pageInput.value);
+    if (pageNum >= pdfDoc.numPages) {
+        pageNum = pdfDoc.numPages;
+    }
+    if (pageNum <= 1) {
+        pageNum = 1;
+    }
+    queueRenderPage(pageNum);
+    pageInput.value = pageNum;
+}
+document.getElementById('go-to-page').addEventListener('click', goToPage);
