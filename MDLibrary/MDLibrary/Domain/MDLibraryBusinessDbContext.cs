@@ -17,6 +17,7 @@ namespace MDLibrary.Domain
         public DbSet<Keyword> Keywords { get; set; }
         public DbSet<LiteratureFile> LiteratureFiles { get; set; }
         public DbSet<LiteraturePage> LiteraturePages { get; set; }
+        public DbSet<Bookmark> Bookmarks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -69,6 +70,16 @@ namespace MDLibrary.Domain
                 e =>
                 {
                     e.Property(p => p.Text).HasColumnType("text");
+                });
+
+            // Bookmarks configuration //
+
+            modelBuilder.Entity<Bookmark>(
+                e =>
+                {
+                    e.Property(p => p.Title).HasColumnType("varchar(1024)");
+                    e.Property(p => p.Description).HasColumnType("text");
+                    e.Property(p => p.UserId).HasColumnType("text");
                 });
         }
     }
