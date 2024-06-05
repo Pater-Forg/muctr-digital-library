@@ -1,4 +1,4 @@
-var url = document.getElementById("file-path").value;
+var url = "/Reader/GetFile?id=" + document.getElementById("file-path").value;
 
 // Loaded via <script> tag, create shortcut to access PDF.js exports.
 var { pdfjsLib } = globalThis;
@@ -93,6 +93,9 @@ document.getElementById('next-page').addEventListener('click', onNextPage);
 pdfjsLib.getDocument(url).promise.then(function (pdfDoc_) {
     pdfDoc = pdfDoc_;
     document.getElementById('page-count').textContent = pdfDoc.numPages;
+    pageNum = Number(document.getElementById('init-page').value);
+    if (pageNum < 1) pageNum = 1;
+    if (pageNum > pdfDoc.numPages) pageNum = pdfDoc.numPages;
 
     // Initial/first page rendering
     renderPage(pageNum);

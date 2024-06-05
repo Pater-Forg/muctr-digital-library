@@ -1,7 +1,9 @@
 ﻿<input type="hidden" id="file-path" value="@ViewBag.FilePath" />
+<input type="hidden" id="init-page" value="@ViewBag.PageNumber" />
 <div class="input-group mb-3">
     <input class="form-control" type="number" id="page-input" />
     <button id="go-to-page" class="btn btn-outline-secondary">Перейти</button>
+    <button id="make-bookmark" class="btn btn-outline-secondary"><i id="bookmark-icon" class="fa-regular fa-bookmark"></i></button>
 </div>
 <div class="text-center">
     <div class="top-bar mb-3 sticky-top bg-white">
@@ -11,13 +13,6 @@
         <span class="page-info">
             <span id="page-num"></span> / <span id="page-count"></span>
         </span>
-        @* <span>
-            <span>
-                <input class="col-1 text-center" inputmode="numeric" id="page-num" />
-            </span>
-            /
-            <span id="page-count"></span>
-        </span> *@
         <button class="btn" id="next-page">
             Вперед <i class="fas fa-arrow-circle-right"></i>
         </button>
@@ -29,12 +24,180 @@
 </div>
 
 <script type="module" src="~/lib/pdf-js/pdf.mjs"></script>
-<script type="module" src="~/js/pdf-reader.js"></script>
+<script type="module">
+    var bookmarksPageList = null;
 
-@* <script type="text/javascript">
-    let pageInput = document.getElementById('page-input');
-    document.getElementById('go-to-page').addEventListener('click', function (e) {
-        e.preventDefault();
-        queueRenderPage(pageInput.value);
-    });    
-</script> *@
+    function loadBookmarksList() {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetBookmarksPageList", "Account", new { Area = "Identity" })',
+            data: {
+                'literatureId': '@ViewBag.LiteratureId',
+            },
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                bookmarksPageList = result.bookmarksPageList;
+            },
+            error: function (result) {
+                alert("Ошибка при получении закладок");
+            }
+        });
+    }
+
+    $(document).ready(loadBookmarksList);
+
+    function switchBookmarkClasses() {
+        if ($('#bookmark-icon').hasClass('fa-regular')) {
+            $('#bookmark-icon').removeClass('fa-regular').addClass('fa-solid');
+        }
+        else {
+            $('#bookmark-icon').removeClass('fa-solid').addClass('fa-regular');
+        }
+    }
+
+    document.getElementById('make-bookmark').addEventListener('click', function () {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("CreateOrDeleteBookmark", "Account", new { Area = "Identity" })',
+            data: {
+                'literatureId': '@ViewBag.LiteratureId',
+                'page': document.getElementById('page-num').textContent
+            },
+            contentType: "application/json;charset=utf-8",
+            success: function (result) {
+                switchBookmarkClasses();
+                loadBookmarksList();
+            },
+            error: function (result) {
+                alert("Ошибка при добавлении/удалении закладки");
+            }
+        });
+    });
+
+
+    // pdf reader
+
+    var url = "/Reader/GetFile?id=" + document.getElementById("file-path").value;
+
+    // Loaded via <script> tag, create shortcut to access PDF.js exports.
+    var { pdfjsLib } = globalThis;
+
+    // The workerSrc property shall be specified.
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '/lib/pdf-js/pdf.worker.mjs';
+
+    var pdfDoc = null,
+        pageNum = 1,
+        pageRendering = false,
+        pageNumPending = null,
+        scale = 1.5,
+        canvas = document.getElementById('pdf-render'),
+        ctx = canvas.getContext('2d'),
+        pageInput = document.getElementById('page-input');
+
+    /**
+     * Get page info from document, resize canvas accordingly, and render page.
+     * param num Page number.
+     */
+    function renderPage(num) {
+        pageRendering = true;
+        // Using promise to fetch the page
+        pdfDoc.getPage(num).then(function (page) {
+            var viewport = page.getViewport({ scale: scale });
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            // Render PDF page into canvas context
+            var renderContext = {
+                canvasContext: ctx,
+                viewport: viewport
+            };
+            var renderTask = page.render(renderContext);
+
+            // Wait for rendering to finish
+            renderTask.promise.then(function () {
+                pageRendering = false;
+                if (pageNumPending !== null) {
+                    // New page rendering is pending
+                    renderPage(pageNumPending);
+                    pageNumPending = null;
+                }
+            });
+        });
+
+        // Update page counters
+        document.getElementById('page-num').textContent = num;
+
+        let bookmarkIcon = $('#bookmark-icon');
+        if ($.inArray(num, bookmarksPageList) != -1) {
+            bookmarkIcon.removeClass('fa-regular').addClass('fa-solid');
+        } else {
+            bookmarkIcon.removeClass('fa-solid').addClass('fa-regular');
+        }
+    }
+
+    /**
+     * If another page rendering in progress, waits until the rendering is
+     * finised. Otherwise, executes rendering immediately.
+     */
+    function queueRenderPage(num) {
+        if (pageRendering) {
+            pageNumPending = num;
+        } else {
+            renderPage(num);
+        }
+    }
+
+    /**
+     * Displays previous page.
+     */
+    function onPrevPage() {
+        $("html, body").animate({ scrollTop: 0 }, "fast");
+        if (pageNum <= 1) {
+            return;
+        }
+        pageNum--;
+        queueRenderPage(pageNum);
+    }
+    document.getElementById('prev-page').addEventListener('click', onPrevPage);
+
+    /**
+     * Displays next page.
+     */
+    function onNextPage() {
+        $("html, body").animate({ scrollTop: 0 }, "fast");
+        if (pageNum >= pdfDoc.numPages) {
+            return;
+        }
+        pageNum++;
+        queueRenderPage(pageNum);
+    }
+    document.getElementById('next-page').addEventListener('click', onNextPage);
+
+    /**
+     * Asynchronously downloads PDF.
+     */
+    pdfjsLib.getDocument(url).promise.then(function (pdfDoc_) {
+        pdfDoc = pdfDoc_;
+        document.getElementById('page-count').textContent = pdfDoc.numPages;
+        pageNum = Number(document.getElementById('init-page').value);
+        if (pageNum < 1) pageNum = 1;
+        if (pageNum > pdfDoc.numPages) pageNum = pdfDoc.numPages;
+
+        // Initial/first page rendering
+        renderPage(pageNum);
+    });
+
+    function goToPage() {
+        pageNum = Number(pageInput.value);
+        if (pageNum >= pdfDoc.numPages) {
+            pageNum = pdfDoc.numPages;
+        }
+        if (pageNum <= 1) {
+            pageNum = 1;
+        }
+        queueRenderPage(pageNum);
+        pageInput.value = pageNum;
+    }
+    document.getElementById('go-to-page').addEventListener('click', goToPage);
+</script>

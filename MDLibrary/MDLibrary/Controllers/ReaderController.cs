@@ -20,7 +20,7 @@ namespace MDLibrary.Controllers
         }
 
 		[ActionName("View")]
-        public IActionResult Display(int? id)
+        public IActionResult Display(int? id, short page = 1)
 		{
 			if (id is null)
 			{
@@ -33,7 +33,9 @@ namespace MDLibrary.Controllers
 			{
 				return NotFound();
 			}
-			ViewBag.FilePath = $"/Reader/GetFile?id={file.LiteratureFileId}";
+			ViewBag.FilePath = file.LiteratureFileId;
+			ViewBag.LiteratureId = id;
+			ViewBag.PageNumber = page;
 							
 			return View();
 		}
