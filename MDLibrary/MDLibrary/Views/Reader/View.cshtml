@@ -1,10 +1,9 @@
-﻿<input type="hidden" id="file-path" value="@ViewBag.FilePath" />
-<input type="hidden" id="init-page" value="@ViewBag.PageNumber" />
-<div class="input-group mb-3">
+﻿<div class="col-10 input-group mb-3">
     <input class="form-control" type="number" id="page-input" />
     <button id="go-to-page" class="btn btn-outline-secondary">Перейти</button>
-    <button id="make-bookmark" class="btn btn-outline-secondary"><i id="bookmark-icon" class="fa-regular fa-bookmark"></i></button>
+    <button id="make-or-delete-bookmark" class="btn btn-outline-secondary"><i id="bookmark-icon" class="fa-regular fa-bookmark"></i></button>
 </div>
+
 <div class="text-center">
     <div class="top-bar mb-3 sticky-top bg-white">
         <button class="btn" id="prev-page">
@@ -27,6 +26,27 @@
 <script type="module">
     var bookmarksPageList = null;
 
+    var url = "/Reader/GetFile?id=" + @ViewBag.FileId;
+
+    // Loaded via <script> tag, create shortcut to access PDF.js exports.
+    var { pdfjsLib } = globalThis;
+
+    // The workerSrc property shall be specified.
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '/lib/pdf-js/pdf.worker.mjs';
+
+    var pdfDoc = null,
+        pageNum = 1,
+        pageRendering = false,
+        pageNumPending = null,
+        scale = 1.5,
+        canvas = document.getElementById('pdf-render'),
+        ctx = canvas.getContext('2d'),
+        pageInput = document.getElementById('page-input'),
+        bookmarkIcon = $('#bookmark-icon');
+
+    /**
+     * Get list of page numbers with bookmarks
+     */
     function loadBookmarksList() {
         $.ajax({
             type: "GET",
@@ -47,22 +67,28 @@
 
     $(document).ready(loadBookmarksList);
 
+    /**
+     * Set class when bookmark is added or deleted
+     */
     function switchBookmarkClasses() {
-        if ($('#bookmark-icon').hasClass('fa-regular')) {
-            $('#bookmark-icon').removeClass('fa-regular').addClass('fa-solid');
+        if (bookmarkIcon.hasClass('fa-regular')) {
+            bookmarkIcon.removeClass('fa-regular').addClass('fa-solid');
         }
         else {
-            $('#bookmark-icon').removeClass('fa-solid').addClass('fa-regular');
+            bookmarkIcon.removeClass('fa-solid').addClass('fa-regular');
         }
     }
 
-    document.getElementById('make-bookmark').addEventListener('click', function () {
+    /**
+     * When bookmark icon is clicked perform creation or deletion of bookmark
+     */
+    document.getElementById('make-or-delete-bookmark').addEventListener('click', function () {
         $.ajax({
             type: "GET",
             url: '@Url.Action("CreateOrDeleteBookmark", "Account", new { Area = "Identity" })',
             data: {
                 'literatureId': '@ViewBag.LiteratureId',
-                'page': document.getElementById('page-num').textContent
+                'page': pageNum
             },
             contentType: "application/json;charset=utf-8",
             success: function (result) {
@@ -75,29 +101,9 @@
         });
     });
 
-
-    // pdf reader
-
-    var url = "/Reader/GetFile?id=" + document.getElementById("file-path").value;
-
-    // Loaded via <script> tag, create shortcut to access PDF.js exports.
-    var { pdfjsLib } = globalThis;
-
-    // The workerSrc property shall be specified.
-    pdfjsLib.GlobalWorkerOptions.workerSrc = '/lib/pdf-js/pdf.worker.mjs';
-
-    var pdfDoc = null,
-        pageNum = 1,
-        pageRendering = false,
-        pageNumPending = null,
-        scale = 1.5,
-        canvas = document.getElementById('pdf-render'),
-        ctx = canvas.getContext('2d'),
-        pageInput = document.getElementById('page-input');
-
     /**
      * Get page info from document, resize canvas accordingly, and render page.
-     * param num Page number.
+     * @@param num Page number.
      */
     function renderPage(num) {
         pageRendering = true;
@@ -128,7 +134,7 @@
         // Update page counters
         document.getElementById('page-num').textContent = num;
 
-        let bookmarkIcon = $('#bookmark-icon');
+        // if current page is bookmark then set class for bookmark icon
         if ($.inArray(num, bookmarksPageList) != -1) {
             bookmarkIcon.removeClass('fa-regular').addClass('fa-solid');
         } else {
@@ -180,7 +186,7 @@
     pdfjsLib.getDocument(url).promise.then(function (pdfDoc_) {
         pdfDoc = pdfDoc_;
         document.getElementById('page-count').textContent = pdfDoc.numPages;
-        pageNum = Number(document.getElementById('init-page').value);
+        pageNum = Number(@ViewBag.InitPage);
         if (pageNum < 1) pageNum = 1;
         if (pageNum > pdfDoc.numPages) pageNum = pdfDoc.numPages;
 
@@ -188,6 +194,9 @@
         renderPage(pageNum);
     });
 
+    /**
+     * Render page from input field
+     */
     function goToPage() {
         pageNum = Number(pageInput.value);
         if (pageNum >= pdfDoc.numPages) {

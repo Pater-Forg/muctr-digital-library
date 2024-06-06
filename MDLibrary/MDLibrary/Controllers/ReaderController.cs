@@ -33,9 +33,9 @@ namespace MDLibrary.Controllers
 			{
 				return NotFound();
 			}
-			ViewBag.FilePath = file.LiteratureFileId;
+			ViewBag.FileId = file.LiteratureFileId;
 			ViewBag.LiteratureId = id;
-			ViewBag.PageNumber = page;
+			ViewBag.InitPage = page;
 							
 			return View();
 		}
