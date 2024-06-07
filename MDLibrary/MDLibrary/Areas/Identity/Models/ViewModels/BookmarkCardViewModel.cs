@@ -7,5 +7,6 @@
         public string? Description { get; set; }
         public short? PageNumber { get; set; }
         public int? LiteratureId { get; set; }
+        public string? LiteratureTitle { get; set; }
     }
 }

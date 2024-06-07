@@ -86,7 +86,11 @@ namespace MDLibrary.Areas.Identity.Controllers
 					LiteratureId = b.LiteraturePage == null
 						? null
 						: b.LiteraturePage.Literature.LiteratureId,
-				})
+					LiteratureTitle = b.LiteraturePage == null
+                        ? null
+                        : b.LiteraturePage.Literature.Caption,
+
+                })
 				.AsEnumerable();
 			return View(new BookmarksViewModel
 			{

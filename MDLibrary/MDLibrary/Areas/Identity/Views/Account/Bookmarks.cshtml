@@ -9,11 +9,13 @@
 	<div class="col-10">
 		@foreach (var bookmark in Model.Bookmarks)
 		{
-			<div class="card">
+			<div class="card mb-3">
 				<div class="card-body">
-					<h5 class="card-title">@bookmark.Title</h5>
-					<p class="card-text">@bookmark.Description</p>
-					<a asp-controller="Reader"
+					<h5 class="card-title">@(bookmark.LiteratureTitle ?? "Удалено")</h5>
+					<h6 class="card-subtitle mb-2 text-body-secondary">@(bookmark.Title ?? "Без названия")</h6>
+					<p class="card-text">@(bookmark.Description ?? "Описание отсутствует")</p>
+					<a asp-area=""
+						asp-controller="Reader"
 						asp-action="View" 
 						asp-route-id="@bookmark.LiteratureId" 
 						asp-route-page="@bookmark.PageNumber"
