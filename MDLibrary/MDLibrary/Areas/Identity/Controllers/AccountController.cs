@@ -1,4 +1,5 @@
-﻿using MDLibrary.Areas.Identity.Models.ViewModels;
+﻿using MDLibrary.Areas.Identity.Models;
+using MDLibrary.Areas.Identity.Models.ViewModels;
 using MDLibrary.Domain;
 using MDLibrary.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -74,7 +75,6 @@ namespace MDLibrary.Areas.Identity.Controllers
 				.Where(b => b.UserId == userId)
 				.Skip((page - 1) * BookmarksPerPage)
 				.Take(BookmarksPerPage)
-				.AsNoTracking()
 				.Select(b => new BookmarkCardViewModel
 				{
 					Id = b.Id,
@@ -123,63 +123,112 @@ namespace MDLibrary.Areas.Identity.Controllers
 			return Json(new {bookmarksPageList = bookmarksPageList});
 		}
 
-		public async Task<IActionResult> CreateOrDeleteBookmark([FromQuery] int? literatureId, [FromQuery] short? page)
+		[HttpPost]
+		public async Task<IActionResult> CreateBookmark([FromBody] CreateBookmarkModel bookmark)
 		{
-			if (literatureId == null || page == null)
-			{
-				return new StatusCodeResult(StatusCodes.Status400BadRequest);
-			}
+            if (bookmark.LiteratureId == null || bookmark.Page == null)
+            {
+                return new StatusCodeResult(StatusCodes.Status400BadRequest);
+            }
 
-			var literaturePage = await _context.LiteraturePages
-				.Include(p => p.Literature)
-				.FirstOrDefaultAsync(p => p.Literature.LiteratureId == literatureId && p.PageNumber == page);
+            var literaturePage = await _context.LiteraturePages
+                .Include(p => p.Literature)
+                .FirstOrDefaultAsync(p => p.Literature.LiteratureId == bookmark.LiteratureId && p.PageNumber == bookmark.Page);
 
-			if (literaturePage == null)
+            if (literaturePage == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return new StatusCodeResult(StatusCodes.Status401Unauthorized);
+            }
+
+            var newBookmark = new Bookmark
+            {
+                UserId = user.Id,
+                LiteraturePage = literaturePage,
+                Title = bookmark.Title,
+                Description = bookmark.Description
+            };
+
+            _context.Bookmarks.Add(newBookmark);
+            try
+            {
+                _context.SaveChanges();
+                return Ok();
+            }
+            catch
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+		public async Task<IActionResult> RemoveBookmark([FromQuery] int? literatureId, [FromQuery] short? page)
+		{
+            if (literatureId == null || page == null)
+            {
+                return new StatusCodeResult(StatusCodes.Status400BadRequest);
+            }
+
+            var literaturePage = await _context.LiteraturePages
+                .Include(p => p.Literature)
+                .FirstOrDefaultAsync(p => p.Literature.LiteratureId == literatureId && p.PageNumber == page);
+
+            if (literaturePage == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return new StatusCodeResult(StatusCodes.Status401Unauthorized);
+            }
+
+            // try to receive bookmark from db
+            var bookmark = await _context.Bookmarks
+                .FirstOrDefaultAsync(b => b.UserId == user.Id && b.LiteraturePage == literaturePage);
+
+			if (bookmark == null)
 			{
 				return NotFound();
 			}
 
-			var user = await _userManager.GetUserAsync(User);
-			if (user == null)
-			{
-				return new StatusCodeResult(StatusCodes.Status401Unauthorized);
-			}
-
-			// try to receive bookmark from db
-			var bookmark = await _context.Bookmarks
-				.FirstOrDefaultAsync(b => b.UserId == user.Id && b.LiteraturePage == literaturePage);
-
-			// if bookmark is already exist then delete it
-			if (bookmark != null)
-			{
-				_context.Bookmarks.Remove(bookmark);
-				try
-				{
-					_context.SaveChanges();
-                    return Ok();
-                }
-				catch
-				{
-					return new StatusCodeResult(StatusCodes.Status500InternalServerError);
-				}
-			}
-
-			// else add new bookmark
-
-			bookmark = new Bookmark
-			{
-				UserId = user.Id,
-				LiteraturePage = literaturePage,
-				Title = null,
-				Description = null
-			};
-
-			_context.Bookmarks.Add(bookmark);
-			try
-			{
-				_context.SaveChanges();
+            _context.Bookmarks.Remove(bookmark);
+            try
+            {
+                _context.SaveChanges();
                 return Ok();
             }
+            catch
+            {
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+		public IActionResult RemoveBookmarkById([FromQuery] int? id)
+		{
+			if (id == null)
+			{
+				return new StatusCodeResult(StatusCodes.Status400BadRequest);
+			}
+
+			var bookmark = _context.Bookmarks.FirstOrDefault(b => b.Id == id);
+
+			if (bookmark is null)
+			{
+				return NotFound();
+			}
+
+			try
+			{
+				_context.Bookmarks.Remove(bookmark);
+				_context.SaveChanges();
+				return Ok();
+			}
 			catch
 			{
 				return new StatusCodeResult(StatusCodes.Status500InternalServerError);

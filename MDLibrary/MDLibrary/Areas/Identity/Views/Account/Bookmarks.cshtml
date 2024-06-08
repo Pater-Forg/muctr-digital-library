@@ -2,6 +2,25 @@
 @{
 	ViewData["Title"] = "Закладки";
 }
+
+<div class="modal fade" tabindex="-1" id="deleteModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Удаление закладки</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>Вы действительно хотите удалить закладку?</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+				<button type="button" class="btn btn-primary" onclick="doRemoveBookmark();">Да</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="row">
 	@{
 		await Html.RenderPartialAsync("_manageNav");
@@ -9,9 +28,9 @@
 	<div class="col-10">
 		@foreach (var bookmark in Model.Bookmarks)
 		{
-			<div class="card mb-3">
+			<div id="@bookmark.Id" class="card mb-3">
 				<div class="card-body">
-					<h5 class="card-title">@(bookmark.LiteratureTitle ?? "Удалено")</h5>
+					<h5 class="card-title">@(bookmark.LiteratureTitle ?? "Удалено"), стр. @bookmark.PageNumber</h5>
 					<h6 class="card-subtitle mb-2 text-body-secondary">@(bookmark.Title ?? "Без названия")</h6>
 					<p class="card-text">@(bookmark.Description ?? "Описание отсутствует")</p>
 					<a asp-area=""
@@ -20,7 +39,7 @@
 						asp-route-id="@bookmark.LiteratureId" 
 						asp-route-page="@bookmark.PageNumber"
 						class="btn btn-outline-primary">Перейти</a>
-					<a class="btn btn-outline-danger" href="#">Удалить</a>
+					<button class="btn btn-outline-danger" data-id="@bookmark.Id" onclick="removeBookmark(this);">Удалить</button>
 				</div>
 			</div>
 		}
@@ -34,4 +53,30 @@
 
 <script type="text/javascript">
 	$('#navBookmarks').addClass('active');
+
+	var bookmarkIdToDelete = null;
+
+	function doRemoveBookmark() {
+		if (bookmarkIdToDelete == null) {
+			return;
+		}
+		$.ajax({
+			url: '@Url.Action("RemoveBookmarkById")',
+			type: "GET",
+			data: { 'id': bookmarkIdToDelete },
+			success: function () {
+				document.getElementById(bookmarkIdToDelete).remove();
+				bookmarkIdToDelete = null;
+			},
+			error: function () {
+				alert("Ошибка при удалении закладки");
+			}
+		});
+		$('#deleteModal').modal("hide");
+	}
+
+	function removeBookmark(item) {
+		bookmarkIdToDelete = $(item).data("id");
+		$('#deleteModal').modal("show");
+	}
 </script>
