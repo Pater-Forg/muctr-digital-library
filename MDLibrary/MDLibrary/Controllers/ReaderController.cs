@@ -3,13 +3,13 @@ using MDLibrary.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
 using System.Linq;
 
 namespace MDLibrary.Controllers
 {
+	[Authorize]
 	public class ReaderController : Controller
 	{
 		private readonly MDLibraryBusinessDbContext _context;

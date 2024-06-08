@@ -42,25 +42,20 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm bg-light gradient-custom-navbar border-bottom box-shadow">
+        <nav class="navbar navbar-expand-lg bg-light gradient-custom-navbar border-bottom box-shadow">
             <div class="container">
-                <a class="d-flex align-items-center mb-md-0 me-md-auto text-decoration-none text-white" href="~/">
+                <a class="d-flex align-items-center mb-md-0 me-auto text-decoration-none text-white" href="~/">
                     <object data="~/images/logo.svg" class="bi me-2" width="24" height="36"></object>
                     <span class="fs-4">МИБС</span>
                 </a>
-                @{
-                    var result = Engine.FindView(ViewContext, "_LoginPartial", isMainPage: false);
-                }
-                @if (result.Success)
-                {
-                    await Html.RenderPartialAsync("_LoginPartial");
-                }
-                else
-                {
-                    throw new InvalidOperationException("The default Identity UI layout requires a partial view '_LoginPartial' " +
-                    "usually located at '/Pages/_LoginPartial' or at '/Views/Shared/_LoginPartial' to work. Based on your configuration " +
-                    $"we have looked at it in the following locations: {System.Environment.NewLine}{string.Join(System.Environment.NewLine, result.SearchedLocations)}.");
-                }
+                <button class="navbar-toggler btn btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarToggler">
+                    @{
+                        await Html.RenderPartialAsync("_LoginPartial");
+                    }
+                </div>
             </div>
         </nav>
     </header>
