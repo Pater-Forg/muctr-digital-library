@@ -1,0 +1,140 @@
+﻿@model SearchViewModel
+
+@{
+	ViewData["Title"] = "Поиск";
+}
+
+<div class="row-md-3">
+	<form asp-action="Index" method="get">
+		<div class="mb-2 row">
+			<label asp-for="SearchModel.SearchQuery" class="col-2 col-form-label text-dark">Что ищем?</label>
+			<div class="col-10">
+				<input asp-for="SearchModel.SearchQuery" type="text" value="@(Model.SearchModel?.SearchQuery ?? "")" class="form-control" />
+			</div>
+			<span class="text-danger" asp-validation-for="@Model.SearchModel.SearchQuery"></span>
+		</div>
+		<div class="mb-2 row">
+			<div class="col-2">Где ищем?</div>
+			<div class="col-5">
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" checked asp-for="SearchModel.SearchInCaption"/>
+					<label class="form-check-label">В названии литературы</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" asp-for="SearchModel.SearchInKeywords"/>
+					<label class="form-check-label">В ключевых словах</label>
+				</div>
+			</div>
+			<div class="col-5">
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" checked asp-for="SearchModel.SearchInAbstract"/>
+					<label class="form-check-label">В аннотации</label>
+				</div>
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" asp-for="SearchModel.SearchInText"/>
+					<label class="form-check-label">В тексте литературы</label>
+				</div>
+			</div>
+		</div>
+		<div class="mb-4 row">
+			<label asp-for="SearchModel.Authors" class="col-2 col-form-label text-dark">Авторы: </label>
+			<div class="col-10">
+				<input id="livesearchauthors" asp-for="SearchModel.Authors" type="text" class="form-control" />
+				<div id="authorsresult" class="list-group"></div>
+			</div>
+		</div>
+		<div class="mb-2 form-group">
+			<label class="form-label text-dark">Год издания:</label>
+			<div class="row alignment">
+				<div class="col-1">
+					<label>С</label>
+				</div>
+				<div class="col-2">
+					<input asp-for="SearchModel.PublishYearLower" type="number" class="form-control" />
+				</div>
+				<div class="col-1">
+					<label class="col">По</label>
+				</div>
+				<div class="col-2">
+					<input asp-for="SearchModel.PublishYearUpper" type="number" class="form-control" />
+				</div>
+				<div class="col-3">
+					<select asp-for="SearchModel.Order" class="form-select">
+						<option value="desc" selected>Сначала новые</option>
+						<option value="asc">Сначала старые</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div class="mb-5 mt-4 form-group">
+			<button type="submit" class="bw-90 btn btn-primary centering">Искать</button>
+		</div>
+	</form>
+</div>
+@if (Model.SearchResults != null)
+{
+	if (Model.SearchResults.Any())
+	{
+		<p class="form-group">
+			Найдено документов: @Model.PagingInfo.TotalItems
+		</p>
+	}
+	else
+	{
+		<p class="form-group">
+			Результатов не найдено. Попробуйте изменить условия поиска.
+		</p>
+	}
+	foreach (var literature in Model.SearchResults)
+	{
+		await Html.RenderPartialAsync("_LiteratureCardPartial", literature);
+	}
+	<div class="d-flex mb-3 justify-content-center">
+		<div page-model="@Model.PagingInfo" page-action="Index" page-query="@Context.Request.Query"
+			 page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark"
+			 page-class-selected="btn-primary" class="btn-group pull-right m-1"></div>
+	</div>
+}
+<script type="text/javascript">
+	let timeout = null;
+
+	document.getElementById('livesearchauthors').addEventListener('keyup', function (e) {
+		clearTimeout(timeout)
+		timeout = setTimeout(function () {
+			LiveSearch()
+		}, 800);
+	});
+
+	function LiveSearch() {
+		//Get the input value
+		let value = document.getElementById('livesearchauthors').value
+
+		$.ajax({
+			type: "POST",
+			url: "/LiveSearch/Authors",
+			// Attach the value to a parameter called search
+			data: { query: value },
+			datatype: "html",
+			success: function (data) {
+				// Insert the returned search results html into the result element
+				$('#authorsresult').html(data);
+			}
+		});
+	}
+
+	let authors = [];
+
+	function AppendTextToInput(authorName) {
+		authors.push(authorName);
+		$('#livesearchauthors').val(authors.join(', '));
+		document.getElementById('livesearchauthors').focus();
+	}
+
+	const authorsInput = document.getElementById('livesearchauthors');
+
+	authorsInput.addEventListener('input', function () {
+		if (!this.value) {
+			authors = [];
+		}
+	})
+</script>

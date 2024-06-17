@@ -1,0 +1,110 @@
+﻿@model LiteratureAddViewModel
+@{
+	ViewData["Title"] = "Добавление литературы";
+}
+
+<h3>Добавление литературы</h3>
+<div class="text-danger" asp-validation-summary="ModelOnly"></div>
+<form asp-area="Admin" asp-controller="Literature" asp-action="Add" method="post" enctype="multipart/form-data">
+	<p class="text-danger">@ViewBag.ErrorMessage</p>
+	<div class="form-group">
+		<label asp-for="@Model.Caption">Название</label>
+		<input asp-for="@Model.Caption" class="form-control" />
+		<span asp-validation-for="@Model.Caption" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.Authors">Авторы</label>
+		<input id="livesearchauthors" asp-for="@Model.Authors" class="form-control" />
+		<div id="authorsresult" class="list-group"></div>
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.Keywords">Ключевые слова</label>
+		<input asp-for="@Model.Keywords" class="form-control" />
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.PageCount">Количество страниц</label>
+		<input asp-for="@Model.PageCount" type="number" class="form-control" />
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.PublishYear">Год издания</label>
+		<input asp-for="@Model.PublishYear" type="number" class="form-control" />
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.PublishLocation">Место издания</label>
+		<input asp-for="@Model.PublishLocation" class="form-control" />
+		<span asp-validation-for="@Model.PublishLocation" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.Publisher">Издательство</label>
+		<input asp-for="@Model.Publisher" class="form-control" />
+		<span asp-validation-for="@Model.Publisher" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.Isbn">ISBN</label>
+		<input asp-for="@Model.Isbn" class="form-control" />
+		<span asp-validation-for="@Model.Isbn" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.Bbc">ББК</label>
+		<input asp-for="@Model.Bbc" class="form-control" />
+		<span asp-validation-for="@Model.Bbc" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.Udc">УДК</label>
+		<input asp-for="@Model.Udc" class="form-control" />
+		<span asp-validation-for="@Model.Udc" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.LiteratureFile">Файл</label>
+		<input asp-for="@Model.LiteratureFile" type="file" class="form-control" />
+	</div>
+	<div class="form-group">
+		<label asp-for="@Model.Abstract">Аннотация</label>
+		<textarea asp-for="@Model.Abstract" class="form-control" rows="5"></textarea>
+	</div>
+	<button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+
+<script type="text/javascript">
+	let timeout = null;
+
+	document.getElementById('livesearchauthors').addEventListener('keyup', function (e) {
+		clearTimeout(timeout)
+		timeout = setTimeout(function () {
+			LiveSearch()
+		}, 800);
+	});
+
+	function LiveSearch() {
+		//Get the input value
+		let value = document.getElementById('livesearchauthors').value
+
+		$.ajax({
+			type: "POST",
+			url: "/LiveSearch/Authors",
+			// Attach the value to a parameter called search
+			data: { query: value },
+			datatype: "html",
+			success: function (data) {
+				// Insert the returned search results html into the result element
+				$('#authorsresult').html(data);
+			}
+		});
+	}
+
+	let authors = [];
+
+	function AppendTextToInput(authorName) {
+		authors.push(authorName);
+		$('#livesearchauthors').val(authors.join(', '));
+		document.getElementById('livesearchauthors').focus();
+	}
+
+	const authorsInput = document.getElementById('livesearchauthors');
+
+	authorsInput.addEventListener('input', function () {
+		if (!this.value) {
+			authors = [];
+		}
+	})
+</script>

@@ -1,0 +1,38 @@
+﻿@model LiteratureCardViewModel
+@inject SignInManager<LibraryUser> SignInManager
+
+<div class="card w-100 mb-3">
+	<div class="card-body">
+		<h4 class="card-title">@Model.Caption</h4>
+		<p class="text-secondary">
+			@Model.Keywords
+		</p>
+		<ul class="list-group list-group-flush">
+			<li class="list-group-item"><b>Авторы:</b> @Model.Authors</li>
+			<li class="list-group-item"><b>Издательство:</b> @Model.Publisher</li>
+			<li class="list-group-item"><b>Год издания:</b> @Model.PublishYear</li>
+			<li class="list-group-item"><b>ISBN:</b> @Model.Isbn</li>
+			<li class="list-group-item"><b>Количество страниц:</b> @Model.PageCount</li>
+			@if (Model.Abstract != null)
+			{
+				<li class="list-group-item"><b>Аннотация:</b></li>
+			}
+		</ul>
+		@if (Model.Abstract != null)
+		{
+			<p class="card-text">@Model.Abstract</p>
+		}
+		@if (Model.HasFile)
+		{
+			@if (SignInManager.IsSignedIn(User))
+			{
+				<a asp-controller="Reader" asp-action="View" asp-route-id="@Model.Id"
+				class="btn btn-primary">Читать</a>
+			}
+			else
+			{
+				<p class="text-warning">Войдите, чтобы читать</p>
+			}
+		}
+	</div>
+</div>
