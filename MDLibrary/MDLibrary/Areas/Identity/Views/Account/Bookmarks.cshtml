@@ -26,22 +26,29 @@
 		await Html.RenderPartialAsync("_manageNav");
 	}
 	<div class="col-10">
-		@foreach (var bookmark in Model.Bookmarks)
+		@if (Model.Bookmarks.Any())
 		{
-			<div id="@bookmark.Id" class="card mb-3">
-				<div class="card-body">
-					<h5 class="card-title">@(bookmark.LiteratureTitle ?? "Удалено"), стр. @bookmark.PageNumber</h5>
-					<h6 class="card-subtitle mb-2 text-body-secondary">@(bookmark.Title ?? "Без названия")</h6>
-					<p class="card-text">@(bookmark.Description ?? "Описание отсутствует")</p>
-					<a asp-area=""
-						asp-controller="Reader"
-						asp-action="View" 
-						asp-route-id="@bookmark.LiteratureId" 
-						asp-route-page="@bookmark.PageNumber"
-						class="btn btn-outline-primary">Перейти</a>
-					<button class="btn btn-outline-danger" data-id="@bookmark.Id" onclick="removeBookmark(this);">Удалить</button>
+			@foreach (var bookmark in Model.Bookmarks)
+			{
+				<div id="@bookmark.Id" class="card mb-3">
+					<div class="card-body">
+						<h5 class="card-title">@(bookmark.LiteratureTitle ?? "Удалено"), стр. @bookmark.PageNumber</h5>
+						<h6 class="card-subtitle mb-2 text-body-secondary">@(bookmark.Title ?? "Без названия")</h6>
+						<p class="card-text">@(bookmark.Description ?? "Описание отсутствует")</p>
+						<a asp-area=""
+						   asp-controller="Reader"
+						   asp-action="View"
+						   asp-route-id="@bookmark.LiteratureId"
+						   asp-route-page="@bookmark.PageNumber"
+						   class="btn btn-outline-primary">Перейти</a>
+						<button class="btn btn-outline-danger" data-id="@bookmark.Id" onclick="removeBookmark(this);">Удалить</button>
+					</div>
 				</div>
-			</div>
+			}
+		}
+		else
+		{
+			<h4>У вас пока нет созданных закладок</h4>
 		}
 	</div>
 </div>

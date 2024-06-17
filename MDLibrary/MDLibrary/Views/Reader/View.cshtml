@@ -23,14 +23,14 @@
     </div>
 </div>
 
-<div class="col-10 input-group mb-3">
+<div class="input-group mb-3">
     <input class="form-control" type="number" id="page-input" />
     <button id="go-to-page" class="btn btn-outline-secondary">Перейти</button>
     <button id="bookmarkBtn" class="btn btn-outline-secondary"><i id="bookmark-icon" class="fa-regular fa-bookmark"></i></button>
 </div>
 
 <div class="text-center">
-    <div class="top-bar mb-3 sticky-top bg-white">
+    <div class="top-bar mb-3 sticky-top bg-white" style="z-index: 900">
         <button class="btn" id="prev-page">
             <i class="fas fa-arrow-circle-left"></i> Назад
         </button>
@@ -189,9 +189,11 @@
         // if current page is bookmark then set class for bookmark icon
         if ($.inArray(num, bookmarksPageList) != -1) {
             bookmarkIcon.removeClass('fa-regular').addClass('fa-solid');
+            document.getElementById('bookmarkBtn').removeEventListener("click", showBookmarkModal);
             document.getElementById('bookmarkBtn').addEventListener("click", removeBookmark);
         } else {
             bookmarkIcon.removeClass('fa-solid').addClass('fa-regular');
+            document.getElementById('bookmarkBtn').removeEventListener("click", removeBookmark);
             document.getElementById('bookmarkBtn').addEventListener("click", showBookmarkModal);
         }
     }

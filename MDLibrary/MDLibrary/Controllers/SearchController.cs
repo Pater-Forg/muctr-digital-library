@@ -17,10 +17,14 @@ namespace MDLibrary.Controllers
         {
 			_context = context;
         }
-        public IActionResult Index(SearchViewModel searchViewModel, int? page)
+        public IActionResult Index(SearchViewModel searchViewModel, [FromQuery(Name = "p")] int? page)
 		{
 			if (searchViewModel.SearchModel is not null)
 			{
+				if (!ModelState.IsValid)
+				{
+					return View(searchViewModel);
+				}
 				page ??= 1;
 				var searchResults = _context.Literature.Search(searchViewModel.SearchModel);
 
@@ -47,8 +51,9 @@ namespace MDLibrary.Controllers
 						Udc = literature.Udc,
 						Abstract = literature.Abstract,
 						Keywords = literature.Keywords == null
-									? null
-									: string.Join(", ", literature.Keywords),
+							? null
+							: string.Join(", ", literature.Keywords),
+						KeywordsList = literature.Keywords.Select(k => k.Value).ToList(),
 						Authors = literature.Authors == null
 									? null
 									: string.Join(", ", literature.Authors),

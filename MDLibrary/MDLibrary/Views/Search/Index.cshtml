@@ -6,12 +6,12 @@
 
 <div class="row-md-3">
 	<form asp-action="Index" method="get">
-		<div asp-validation-summary="All"></div>
 		<div class="mb-2 row">
 			<label asp-for="SearchModel.SearchQuery" class="col-2 col-form-label text-dark">Что ищем?</label>
 			<div class="col-10">
 				<input asp-for="SearchModel.SearchQuery" type="text" value="@(Model.SearchModel?.SearchQuery ?? "")" class="form-control" />
 			</div>
+			<span class="text-danger" asp-validation-for="@Model.SearchModel.SearchQuery"></span>
 		</div>
 		<div class="mb-2 row">
 			<div class="col-2">Где ищем?</div>
@@ -57,6 +57,12 @@
 				</div>
 				<div class="col-2">
 					<input asp-for="SearchModel.PublishYearUpper" type="number" class="form-control" />
+				</div>
+				<div class="col-3">
+					<select asp-for="SearchModel.Order" class="form-select">
+						<option value="desc" selected>Сначала новые</option>
+						<option value="asc">Сначала старые</option>
+					</select>
 				</div>
 			</div>
 		</div>
