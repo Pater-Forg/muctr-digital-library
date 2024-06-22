@@ -22,42 +22,46 @@
 </div>
 
 <div class="container">
-	<div class="row">
-		@{
-			await Html.RenderPartialAsync("_manageNav");
-		}
-		<div class="col-10">
-			@if (Model.Bookmarks.Any())
+<div class="row">
+	@{
+		await Html.RenderPartialAsync("_manageNav");
+	}
+	<div class="col-10">
+		@if (Model.Bookmarks.Any())
+		{
+			@foreach (var bookmark in Model.Bookmarks)
 			{
-				@foreach (var bookmark in Model.Bookmarks)
-				{
-					<div id="@bookmark.Id" class="card mb-3">
-						<div class="card-body">
-							<h5 class="card-title">@(bookmark.LiteratureTitle ?? "Удалено"), стр. @bookmark.PageNumber</h5>
-							<h6 class="card-subtitle mb-2 text-body-secondary">@(bookmark.Title ?? "Без названия")</h6>
-							<p class="card-text">@(bookmark.Description ?? "Описание отсутствует")</p>
-							<a asp-area=""
-							   asp-controller="Reader"
-							   asp-action="View"
-							   asp-route-id="@bookmark.LiteratureId"
-							   asp-route-page="@bookmark.PageNumber"
-							   class="btn btn-outline-primary">Перейти</a>
-							<button class="btn btn-outline-danger" data-id="@bookmark.Id" onclick="removeBookmark(this);">Удалить</button>
-						</div>
+				<div id="@bookmark.Id" class="card mb-3">
+					<div class="card-body">
+						<h5 class="card-title">@(bookmark.LiteratureTitle ?? "Удалено"), стр. @bookmark.PageNumber</h5>
+						<h6 class="card-subtitle mb-2 text-body-secondary">@(bookmark.Title ?? "Без названия")</h6>
+						<p class="card-text">@(bookmark.Description ?? "Описание отсутствует")</p>
+						<a asp-area=""
+						   asp-controller="Reader"
+						   asp-action="View"
+						   asp-route-id="@bookmark.LiteratureId"
+						   asp-route-page="@bookmark.PageNumber"
+						   class="btn btn-outline-primary">Перейти</a>
+						<button class="btn btn-outline-danger" data-id="@bookmark.Id" onclick="removeBookmark(this);">Удалить</button>
 					</div>
-				}
+				</div>
+			}
 				<div class="d-flex mb-3 justify-content-center">
 					<div page-model="@Model.PagingInfo" page-action="Bookmarks" page-query="@Context.Request.Query"
 						 page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark"
 						 page-class-selected="btn-primary" class="btn-group pull-right m-1"></div>
 				</div>
-			}
-			else
-			{
-				<h4>У вас пока нет созданных закладок</h4>
-			}
-		</div>
+		}
+		else
+		{
+			<h4>У вас пока нет созданных закладок</h4>
+		}
 	</div>
+</div>
+<div class="d-flex mb-3 justify-content-center">
+	<div page-model="@Model.PagingInfo" page-action="Bookmarks" page-query="@Context.Request.Query"
+		 page-classes-enabled="true" page-class="btn" page-class-normal="btn-outline-dark"
+		 page-class-selected="btn-primary" class="btn-group pull-right m-1"></div>
 </div>
 
 <script type="text/javascript">

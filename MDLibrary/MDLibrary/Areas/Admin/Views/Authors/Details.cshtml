@@ -1,0 +1,37 @@
+﻿@model AuthorsDetailsViewModel
+@{
+	ViewData["Title"] = Model.Name + " - подробности";
+}
+
+<table class="table">
+	<tr>
+		<th>ID</th>
+		<td>@Model.Id</td>
+	</tr>
+	<tr>
+		<th>Имя</th>
+		<td>@Model.Name</td>
+	</tr>
+	<tr>
+		<th colspan="2">Связанная литература</th>
+	</tr>
+	@if (Model.Literature.Any())
+	{
+		foreach (var pair in Model.Literature)
+		{
+			<tr>
+				<td colspan="2">
+					<a asp-area="Admin" asp-controller="Literature" asp-action="Details" asp-route-id="@pair.Key">
+						@pair.Value
+					</a>
+				</td>
+			</tr>
+		}
+	}
+	else
+	{
+		<tr>
+			<td colspan="2">Не найдено</td>
+		</tr>
+	}
+</table>

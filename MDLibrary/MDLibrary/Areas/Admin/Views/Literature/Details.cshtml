@@ -1,0 +1,67 @@
+﻿@model LiteratureDetailsViewModel
+@{
+	ViewData["Title"] = Model.Caption + " - подробности";
+}
+
+<div class="table-responsive text-nowrap">
+	<table class="table">
+		<tr>
+			<th>ID</th>
+			<td>@Model.Id</td>
+		</tr>
+		<tr>
+			<th>Название</th>
+			<td>@Model.Caption</td>
+		</tr>
+		<tr>
+			<th>Авторы</th>
+			<td>@Model.Authors</td>
+		</tr>
+		<tr>
+			<th>Ключевые слова</th>
+			<td>@Model.Keywords</td>
+		</tr>
+		<tr>
+			<th>Количество страниц</th>
+			<td>@Model.PageCount</td>
+		</tr>
+		<tr>
+			<th>Год издания</th>
+			<td>@Model.PublishYear</td>
+		</tr>
+		<tr>
+			<th>Место издания</th>
+			<td>@Model.PublishLocation</td>
+		</tr>
+		<tr>
+			<th>Издательство</th>
+			<td>@Model.Publisher</td>
+		</tr>
+		<tr>
+			<th>ISBN</th>
+			<td>@Model.Isbn</td>
+		</tr>
+		<tr>
+			<th>ББК</th>
+			<td>@Model.Bbc</td>
+		</tr>
+		<tr>
+			<th>УДК</th>
+			<td>@Model.Udc</td>
+		</tr>
+		<tr>
+			<th>Аннотация</th>
+			<td class="text-wrap">@Model.Abstract</td>
+		</tr>
+	</table>
+</div>
+<div class="mb-3">
+<span>
+	@if (Model.HasFile)
+	{
+		<a asp-area="" asp-controller="Reader" asp-action="View" asp-route-id="@Model.Id"
+		   class="btn btn-primary">Читать</a>
+	}
+	<a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-info ms-2">Редактировать</a>
+</span>
+</div>

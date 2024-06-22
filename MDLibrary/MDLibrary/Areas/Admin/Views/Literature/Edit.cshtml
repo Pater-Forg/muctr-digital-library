@@ -1,0 +1,72 @@
+﻿@model LiteratureEditViewModel
+@{
+	ViewData["Title"] = Model.Caption + " - редактировать";
+}
+
+<h3>Редактирование</h3>
+<form asp-area="Admin" asp-controller="Literature" method="post" enctype="multipart/form-data">
+	<p class="text-danger">@ViewBag.ErrorMessage</p>
+	<div class="form-group mb-2">
+		<label asp-for="@Model.Id">ID</label>
+		<input asp-for="@Model.Id" readonly="true" class="form-control" value="@Model.Id" />
+	</div>
+	<div class="form-group mb-2">
+		<label asp-for="@Model.Caption">Название</label>
+		<input asp-for="@Model.Caption" class="form-control" value="@Model.Caption" />
+		<span asp-validation-for="@Model.Caption" class="text-danger"></span>
+	</div>
+	<div class="form-group mb-2">
+		<label asp-for="@Model.Authors">Авторы</label>
+		<input asp-for="@Model.Authors" class="form-control" value="@Model.Authors" />
+	</div>
+	<div class="form-group mb-2">
+		<label asp-for="@Model.Keywords">Ключевые слова</label>
+		<input asp-for="@Model.Keywords" class="form-control" value="@Model.Keywords" />
+	</div>
+	<div class="form-group mb-2">
+		<label asp-for="@Model.PageCount">Количество страниц</label>
+		<input asp-for="@Model.PageCount" type="number" class="form-control" value="@Model.PageCount" />
+	</div>
+	<div class="form-group mb-2">
+		<label asp-for="@Model.PublishYear">Год издания</label>
+		<input asp-for="@Model.PublishYear" type="number" class="form-control" value="@Model.PublishYear" />
+	</div>
+	<div class="form-group mb-2">
+		<label asp-for="@Model.PublishLocation">Место издания</label>
+		<input asp-for="@Model.PublishLocation" class="form-control" value="@Model.PublishLocation" />
+		<span asp-validation-for="@Model.PublishLocation" class="text-danger"></span>
+	</div>
+	<div class="form-group mb-2">
+		<label asp-for="@Model.Publisher">Издательство</label>
+		<input asp-for="@Model.Publisher" class="form-control" value="@Model.Publisher" />
+		<span asp-validation-for="@Model.Publisher" class="text-danger"></span>
+	</div>
+	<div class="form-group mb-2">
+		<label asp-for="@Model.Isbn">ISBN</label>
+		<input asp-for="@Model.Isbn" class="form-control" value="@Model.Isbn" />
+		<span asp-validation-for="@Model.Isbn" class="text-danger"></span>
+	</div>
+	<div class="form-group mb-2">
+		<label asp-for="@Model.Bbc">ББК</label>
+		<input asp-for="@Model.Bbc" class="form-control" value="@Model.Bbc" />
+		<span asp-validation-for="@Model.Bbc" class="text-danger"></span>
+	</div>
+	<div class="form-group mb-2">
+		<label asp-for="@Model.Udc">УДК</label>
+		<input asp-for="@Model.Udc" class="form-control" value="@Model.Udc" />
+		<span asp-validation-for="@Model.Udc" class="text-danger"></span>
+	</div>
+	<div class="form-group mb-2">
+		<label asp-for="@Model.LiteratureFile">Файл</label>
+		<input asp-for="@Model.LiteratureFile" type="file" class="form-control" />
+		@if (Model.HasFile)
+		{
+			<p class="text-warning">С данным экземпляром уже ассоциируется файл</p>
+		}
+	</div>
+	<div class="form-group mb-3">
+		<label asp-for="@Model.Abstract">Аннотация</label>
+		<textarea asp-for="@Model.Abstract" class="form-control" rows="8" value="@Model.Abstract"></textarea>
+	</div>
+	<button type="submit" class="btn btn-primary mb-5">Сохранить</button>
+</form>

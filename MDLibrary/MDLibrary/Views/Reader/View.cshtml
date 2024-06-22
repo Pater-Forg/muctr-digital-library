@@ -1,0 +1,268 @@
+﻿<div class="modal fade" tabindex="-1" id="bookmarkModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Добавление закладки</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="bookmarkTitle" class="form-label">Название</label>
+                    <input id="bookmarkTitle" class="form-control" placeholder="Без названия" />
+                </div>
+                <div class="mb-3">
+                    <label for="bookmarkDescription" class="form-label">Описание</label>
+                    <textarea id="bookmarkDescription" class="form-control" placeholder="Без описания" rows="5"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button id="createBookmarkBtn" type="button" class="btn btn-primary">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="input-group mb-3">
+    <input class="form-control" type="number" id="page-input" />
+    <button id="go-to-page" class="btn btn-outline-secondary">Перейти</button>
+    <button id="bookmarkBtn" class="btn btn-outline-secondary"><i id="bookmark-icon" class="fa-regular fa-bookmark"></i></button>
+</div>
+
+<div class="container-fluid text-center">
+    <div class="top-bar mb-3 sticky-top bg-white" style="z-index: 900">
+        <button class="btn" id="prev-page">
+            <i class="fas fa-arrow-circle-left"></i> Назад
+        </button>
+        <span class="page-info">
+            <span id="page-num"></span> / <span id="page-count"></span>
+        </span>
+        <button class="btn" id="next-page">
+            Вперед <i class="fas fa-arrow-circle-right"></i>
+        </button>
+    </div>
+
+    <div class="bg-dark">
+        <canvas id="pdf-render" style="width: 100%; object-fit: contain;"></canvas>
+    </div>
+</div>
+
+<script type="module" src="~/lib/pdf-js/pdf.mjs"></script>
+<script type="module">
+    var bookmarksPageList = null;
+
+    var url = "/Reader/GetFile?id=" + @ViewBag.FileId;
+
+    // Loaded via <script> tag, create shortcut to access PDF.js exports.
+    var { pdfjsLib } = globalThis;
+
+    // The workerSrc property shall be specified.
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '/lib/pdf-js/pdf.worker.mjs';
+
+    var pdfDoc = null,
+        pageNum = 1,
+        pageRendering = false,
+        pageNumPending = null,
+        scale = 1.5,
+        canvas = document.getElementById('pdf-render'),
+        ctx = canvas.getContext('2d'),
+        pageInput = document.getElementById('page-input'),
+        bookmarkIcon = $('#bookmark-icon');
+
+    /**
+     * Get list of page numbers with bookmarks
+     */
+    function loadBookmarksList() {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("GetBookmarksPageList", "Account", new { Area = "Identity" })',
+            data: {
+                'literatureId': '@ViewBag.LiteratureId',
+            },
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                bookmarksPageList = result.bookmarksPageList;
+            },
+            error: function (result) {
+                alert("Ошибка при получении закладок");
+            }
+        });
+    }
+
+    $(document).ready(loadBookmarksList);
+
+    /**
+     * Set class when bookmark is added or deleted
+     */
+    function switchBookmarkClasses() {
+        if (bookmarkIcon.hasClass('fa-regular')) {
+            bookmarkIcon.removeClass('fa-regular').addClass('fa-solid');
+        }
+        else {
+            bookmarkIcon.removeClass('fa-solid').addClass('fa-regular');
+        }
+    }
+
+    function showBookmarkModal() {
+        $('#bookmarkModal').modal("show");
+    }
+
+    function createBookmark() {
+        var data = {
+            literatureId: '@ViewBag.LiteratureId',
+            page: pageNum,
+            title: document.getElementById('bookmarkTitle').value,
+            description: document.getElementById('bookmarkDescription').value
+        }
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("CreateBookmark", "Account", new { Area = "Identity" })',
+            data: JSON.stringify(data),
+            contentType: "application/json;charset=utf-8",
+            success: function (result) {
+                switchBookmarkClasses();
+                loadBookmarksList();
+                $('#bookmarkModal').modal("hide");
+                $('#bookmarkTitle').val("");
+                $('#bookmarkDescription').val("");
+            },
+            error: function (result) {
+                alert("Ошибка при добавлении закладки");
+            }
+        });
+    }
+    document.getElementById('createBookmarkBtn').addEventListener('click', createBookmark);
+
+    function removeBookmark() {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("RemoveBookmark", "Account", new { Area = "Identity" })',
+            data: {
+                'literatureId': '@ViewBag.LiteratureId',
+                'page': pageNum
+            },
+            contentType: "application/json;charset=utf-8",
+            success: function (result) {
+                switchBookmarkClasses();
+                loadBookmarksList();
+            },
+            error: function (result) {
+                alert("Ошибка при удалении закладки");
+            }
+        });
+    }
+
+    /**
+     * Get page info from document, resize canvas accordingly, and render page.
+     * @@param num Page number.
+     */
+    function renderPage(num) {
+        pageRendering = true;
+        // Using promise to fetch the page
+        pdfDoc.getPage(num).then(function (page) {
+            var viewport = page.getViewport({ scale: scale });
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            // Render PDF page into canvas context
+            var renderContext = {
+                canvasContext: ctx,
+                viewport: viewport
+            };
+            var renderTask = page.render(renderContext);
+
+            // Wait for rendering to finish
+            renderTask.promise.then(function () {
+                pageRendering = false;
+                if (pageNumPending !== null) {
+                    // New page rendering is pending
+                    renderPage(pageNumPending);
+                    pageNumPending = null;
+                }
+            });
+        });
+
+        // Update page counters
+        document.getElementById('page-num').textContent = num;
+
+        // if current page is bookmark then set class for bookmark icon
+        if ($.inArray(num, bookmarksPageList) != -1) {
+            bookmarkIcon.removeClass('fa-regular').addClass('fa-solid');
+            document.getElementById('bookmarkBtn').removeEventListener("click", showBookmarkModal);
+            document.getElementById('bookmarkBtn').addEventListener("click", removeBookmark);
+        } else {
+            bookmarkIcon.removeClass('fa-solid').addClass('fa-regular');
+            document.getElementById('bookmarkBtn').removeEventListener("click", removeBookmark);
+            document.getElementById('bookmarkBtn').addEventListener("click", showBookmarkModal);
+        }
+    }
+
+    /**
+     * If another page rendering in progress, waits until the rendering is
+     * finised. Otherwise, executes rendering immediately.
+     */
+    function queueRenderPage(num) {
+        if (pageRendering) {
+            pageNumPending = num;
+        } else {
+            renderPage(num);
+        }
+    }
+
+    /**
+     * Displays previous page.
+     */
+    function onPrevPage() {
+        $("html, body").animate({ scrollTop: 0 }, "fast");
+        if (pageNum <= 1) {
+            return;
+        }
+        pageNum--;
+        queueRenderPage(pageNum);
+    }
+    document.getElementById('prev-page').addEventListener('click', onPrevPage);
+
+    /**
+     * Displays next page.
+     */
+    function onNextPage() {
+        $("html, body").animate({ scrollTop: 0 }, "fast");
+        if (pageNum >= pdfDoc.numPages) {
+            return;
+        }
+        pageNum++;
+        queueRenderPage(pageNum);
+    }
+    document.getElementById('next-page').addEventListener('click', onNextPage);
+
+    /**
+     * Asynchronously downloads PDF.
+     */
+    pdfjsLib.getDocument(url).promise.then(function (pdfDoc_) {
+        pdfDoc = pdfDoc_;
+        document.getElementById('page-count').textContent = pdfDoc.numPages;
+        pageNum = Number(@ViewBag.InitPage);
+        if (pageNum < 1) pageNum = 1;
+        if (pageNum > pdfDoc.numPages) pageNum = pdfDoc.numPages;
+
+        // Initial/first page rendering
+        renderPage(pageNum);
+    });
+
+    /**
+     * Render page from input field
+     */
+    function goToPage() {
+        pageNum = Number(pageInput.value);
+        if (pageNum >= pdfDoc.numPages) {
+            pageNum = pdfDoc.numPages;
+        }
+        if (pageNum <= 1) {
+            pageNum = 1;
+        }
+        queueRenderPage(pageNum);
+        pageInput.value = pageNum;
+    }
+    document.getElementById('go-to-page').addEventListener('click', goToPage);
+</script>
