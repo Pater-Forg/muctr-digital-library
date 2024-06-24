@@ -35,6 +35,7 @@ builder.Services.AddDefaultIdentity<LibraryUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
     options.Password.RequiredLength = 8;
+    options.Password.RequireNonAlphanumeric = false;
     options.User.RequireUniqueEmail = true;
 }).AddRoles<IdentityRole>().AddEntityFrameworkStores<MDLibraryIdentityDbContext>();
 

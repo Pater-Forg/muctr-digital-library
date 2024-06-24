@@ -14,7 +14,7 @@ namespace MDLibrary.Areas.Identity.Models.ViewModels
 		public string UserName { get; set; }
 
 		[Required(ErrorMessage = "Это поле обязательно")]
-		[StringLength(100, ErrorMessage = "Пароль должен иметь длину от {1} до символов {2}", MinimumLength = 8)]
+		[StringLength(100, ErrorMessage = "Пароль должен иметь длину от {2} до символов {1}, а также обязательно содержать заглавные и строчные буквы и цифры", MinimumLength = 8)]
 		[DataType(DataType.Password)]
 		public string Password { get; set; }
 

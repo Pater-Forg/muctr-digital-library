@@ -36,6 +36,7 @@
                         <div class="form-outline mb-2">
                             <input asp-for="@Model.Password" type="password" class="form-control form-control-lg" />
                             <label asp-for="@Model.Password" class="form-label">Придумайте пароль</label>
+                            <div class="form-text">Заглавные и строчные буквы, цифры</div>
                             <span class="text-danger" asp-validation-for="@Model.Password"></span>
                         </div>
 
